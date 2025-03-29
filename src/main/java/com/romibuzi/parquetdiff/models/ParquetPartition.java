@@ -1,4 +1,4 @@
-package com.romibuzi;
+package com.romibuzi.parquetdiff.models;
 
 public record ParquetPartition(String key, String value) {
     public static ParquetPartition fromString(String partition) {

@@ -1,4 +1,7 @@
-package com.romibuzi;
+package com.romibuzi.parquetdiff;
+
+import com.romibuzi.parquetdiff.models.ParquetDetails;
+import com.romibuzi.parquetdiff.models.ParquetPartitions;
 
 import java.util.ArrayList;
 import java.util.Collections;

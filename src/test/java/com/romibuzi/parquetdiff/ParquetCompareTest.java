@@ -1,5 +1,7 @@
-package com.romibuzi;
+package com.romibuzi.parquetdiff;
 
+import com.romibuzi.parquetdiff.models.ParquetDetails;
+import com.romibuzi.parquetdiff.models.ParquetPartitions;
 import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.Test;
 
