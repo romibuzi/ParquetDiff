@@ -7,7 +7,9 @@ import org.apache.parquet.schema.MessageTypeParser;
 import org.apache.parquet.schema.PrimitiveType;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParquetTypeVisitorTest {
     private final ParquetTypeVisitor visitor = new ParquetTypeVisitor();
@@ -23,16 +25,11 @@ class ParquetTypeVisitorTest {
         parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
-        assertEquals("test_schema", schema.name());
-        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
-        assertNull(schema.primitiveTypeName());
-        assertEquals(1, schema.children().size());
+        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+                new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32)
+        ));
 
-        ParquetSchemaNode firstChild = schema.children().get(0);
-        assertEquals("id", firstChild.name());
-        assertEquals(ParquetSchemaType.PRIMITIVE, firstChild.type());
-        assertEquals(PrimitiveType.PrimitiveTypeName.INT32, firstChild.primitiveTypeName());
-        assertTrue(firstChild.children().isEmpty());
+        assertEquals(expected, schema);
     }
 
     @Test
@@ -51,34 +48,20 @@ class ParquetTypeVisitorTest {
         parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
-        assertEquals("test_schema", schema.name());
-        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
-        assertNull(schema.primitiveTypeName());
-        assertEquals(3, schema.children().size());
+        ParquetSchemaNode expected = new ParquetSchemaNode(
+                "test_schema",
+                ParquetSchemaType.MESSAGE,
+                null,
+                List.of(
+                        new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32),
+                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, List.of(
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY),
+                                new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT64)
+                        )),
+                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY)
+                ));
 
-        ParquetSchemaNode firstChild = schema.children().get(0);
-        assertEquals("id", firstChild.name());
-        assertEquals(ParquetSchemaType.PRIMITIVE, firstChild.type());
-        assertEquals(PrimitiveType.PrimitiveTypeName.INT32, firstChild.primitiveTypeName());
-        assertTrue(firstChild.children().isEmpty());
-
-        ParquetSchemaNode secondChild = schema.children().get(1);
-        assertEquals("address", secondChild.name());
-        assertEquals(ParquetSchemaType.GROUP, secondChild.type());
-        assertNull(secondChild.primitiveTypeName());
-        assertEquals(2, secondChild.children().size());
-        assertEquals("street", secondChild.children().get(0).name());
-        assertEquals(ParquetSchemaType.PRIMITIVE, secondChild.children().get(0).type());
-        assertEquals(PrimitiveType.PrimitiveTypeName.BINARY, secondChild.children().get(0).primitiveTypeName());
-        assertEquals("zip_code", secondChild.children().get(1).name());
-        assertEquals(ParquetSchemaType.PRIMITIVE, secondChild.children().get(1).type());
-        assertEquals(PrimitiveType.PrimitiveTypeName.INT64, secondChild.children().get(1).primitiveTypeName());
-
-        ParquetSchemaNode thirdChild = schema.children().get(2);
-        assertEquals("name", thirdChild.name());
-        assertEquals(ParquetSchemaType.PRIMITIVE, thirdChild.type());
-        assertEquals(PrimitiveType.PrimitiveTypeName.BINARY, thirdChild.primitiveTypeName());
-        assertTrue(thirdChild.children().isEmpty());
+        assertEquals(expected, schema);
     }
 
     @Test
@@ -90,31 +73,27 @@ class ParquetTypeVisitorTest {
                         required group tenant {
                           required binary name (UTF8);
                         }
-                    } 
+                    }
                 }
                 """;
 
         parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
-        assertEquals("test_schema", schema.name());
-        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
-        assertNull(schema.primitiveTypeName());
-        assertEquals(1, schema.children().size());
+        ParquetSchemaNode expected = new ParquetSchemaNode(
+                "test_schema",
+                ParquetSchemaType.MESSAGE,
+                null,
+                List.of(
+                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, List.of(
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY),
+                                new ParquetSchemaNode("tenant", ParquetSchemaType.GROUP, null, List.of(
+                                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY)
+                                ))
+                        ))
+                ));
 
-        ParquetSchemaNode firstChild = schema.children().get(0);
-        assertEquals("address", firstChild.name());
-        assertEquals(ParquetSchemaType.GROUP, firstChild.type());
-        assertNull(firstChild.primitiveTypeName());
-        assertEquals(2, firstChild.children().size());
-
-        assertEquals("street", firstChild.children().get(0).name());
-
-        ParquetSchemaNode nestedChild = firstChild.children().get(1);
-        assertEquals("tenant", nestedChild.name());
-        assertEquals(ParquetSchemaType.GROUP, nestedChild.type());
-        assertEquals(1, nestedChild.children().size());
-        assertEquals("name", nestedChild.children().get(0).name());
+        assertEquals(expected, schema);
     }
 
     @Test
@@ -124,9 +103,9 @@ class ParquetTypeVisitorTest {
         parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
-        assertEquals("test_schema", schema.name());
-        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
-        assertTrue(schema.children().isEmpty());
+        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+
+        assertEquals(expected, schema);
     }
 
     private MessageType parseSchema(String schemaInput) {
