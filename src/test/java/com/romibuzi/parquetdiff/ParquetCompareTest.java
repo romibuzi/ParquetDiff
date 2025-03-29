@@ -20,23 +20,23 @@ class ParquetCompareTest {
 
     @Test
     void findDifferentPartitionsStructureSinglePartition() {
-        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10);
+        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10, null);
         List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first));
         assertTrue(results.isEmpty());
     }
 
     @Test
     void findDifferentPartitionsStructureAllSame() {
-        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10);
-        ParquetDetails second = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-29/country=Spain/part-0000.parquet"), 10);
+        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10, null);
+        ParquetDetails second = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-29/country=Spain/part-0000.parquet"), 10, null);
         List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first, second));
         assertTrue(results.isEmpty());
     }
 
     @Test
     void findDifferentPartitionsStructure() {
-        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10);
-        ParquetDetails second = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-29/part-0000.parquet"), 10);
+        ParquetDetails first = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet"), 10, null);
+        ParquetDetails second = new ParquetDetails(new Path("vaccinations.parquet/date=2020-12-29/part-0000.parquet"), 10, null);
         List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first, second));
         assertEquals(2, results.size());
         assertEquals(List.of("date", "country"), results.get(0).keys());

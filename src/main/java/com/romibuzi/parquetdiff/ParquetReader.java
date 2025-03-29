@@ -1,12 +1,14 @@
 package com.romibuzi.parquetdiff;
 
 import com.romibuzi.parquetdiff.models.ParquetDetails;
+import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.apache.parquet.hadoop.util.HadoopInputFile;
+import org.apache.parquet.schema.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +22,11 @@ public class ParquetReader {
     private static final ParquetReadOptions PARQUET_READ_OPTIONS = ParquetReadOptions.builder().build();
 
     private final FileSystem fileSystem;
+    private final ParquetTypeVisitor typeVisitor;
 
     public ParquetReader(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
+        this.typeVisitor = new ParquetTypeVisitor();
     }
 
     public List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
@@ -59,11 +63,20 @@ public class ParquetReader {
         try {
             HadoopInputFile inputFile = HadoopInputFile.fromStatus(fileStatus, fileSystem.getConf());
             try (ParquetFileReader metadata = ParquetFileReader.open(inputFile, PARQUET_READ_OPTIONS)) {
-                return new ParquetDetails(fileStatus.getPath(), metadata.getRecordCount());
+                return new ParquetDetails(
+                        fileStatus.getPath(),
+                        metadata.getRecordCount(),
+                        extractSchema(metadata.getFileMetaData().getSchema())
+                );
             }
         } catch (IOException e) {
             LOGGER.error("Error reading Parquet file: {}", fileStatus.getPath(), e);
             return null;
         }
+    }
+
+    private ParquetSchemaNode extractSchema(MessageType messageType) {
+        messageType.accept(typeVisitor);
+        return typeVisitor.getSchema();
     }
 }
