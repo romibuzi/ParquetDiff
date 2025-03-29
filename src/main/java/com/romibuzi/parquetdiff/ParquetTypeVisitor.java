@@ -36,7 +36,7 @@ public class ParquetTypeVisitor implements TypeVisitor {
         ParquetSchemaNode node = new ParquetSchemaNode(
                 primitiveType.getName(),
                 ParquetSchemaType.PRIMITIVE,
-                primitiveType
+                primitiveType.getPrimitiveTypeName()
         );
         nodeStack.peek().addChild(node);
     }
