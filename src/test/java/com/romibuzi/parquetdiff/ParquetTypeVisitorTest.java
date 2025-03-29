@@ -22,9 +22,7 @@ class ParquetTypeVisitorTest {
                 }
                 """;
 
-        parseSchema(schemaInput).accept(visitor);
-        ParquetSchemaNode schema = visitor.getSchema();
-
+        ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
                 new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32)
         ));
@@ -45,9 +43,7 @@ class ParquetTypeVisitorTest {
                 }
                 """;
 
-        parseSchema(schemaInput).accept(visitor);
-        ParquetSchemaNode schema = visitor.getSchema();
-
+        ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(
                 "test_schema",
                 ParquetSchemaType.MESSAGE,
@@ -77,9 +73,7 @@ class ParquetTypeVisitorTest {
                 }
                 """;
 
-        parseSchema(schemaInput).accept(visitor);
-        ParquetSchemaNode schema = visitor.getSchema();
-
+        ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(
                 "test_schema",
                 ParquetSchemaType.MESSAGE,
@@ -100,15 +94,18 @@ class ParquetTypeVisitorTest {
     void visitEmptySchema() {
         String schemaInput = "message test_schema {}";
 
-        parseSchema(schemaInput).accept(visitor);
-        ParquetSchemaNode schema = visitor.getSchema();
-
+        ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
 
         assertEquals(expected, schema);
     }
 
-    private MessageType parseSchema(String schemaInput) {
+    private ParquetSchemaNode extractSchema(String schemaInput) {
+        readSchema(schemaInput).accept(visitor);
+        return visitor.getSchema();
+    }
+
+    private MessageType readSchema(String schemaInput) {
         return MessageTypeParser.parseMessageType(schemaInput);
     }
 }
