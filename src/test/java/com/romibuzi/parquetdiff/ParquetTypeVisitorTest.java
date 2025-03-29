@@ -10,6 +10,31 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParquetTypeVisitorTest {
+    private final ParquetTypeVisitor visitor = new ParquetTypeVisitor();
+
+    @Test
+    void visitSchemaSingleField() {
+        String schemaInput = """
+                message test_schema {
+                    required int32 id;
+                }
+                """;
+
+        parseSchema(schemaInput).accept(visitor);
+        ParquetSchemaNode schema = visitor.getSchema();
+
+        assertEquals("test_schema", schema.name());
+        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
+        assertNull(schema.primitiveTypeName());
+        assertEquals(1, schema.children().size());
+
+        ParquetSchemaNode firstChild = schema.children().get(0);
+        assertEquals("id", firstChild.name());
+        assertEquals(ParquetSchemaType.PRIMITIVE, firstChild.type());
+        assertEquals(PrimitiveType.PrimitiveTypeName.INT32, firstChild.primitiveTypeName());
+        assertTrue(firstChild.children().isEmpty());
+    }
+
     @Test
     void visitSchema() {
         String schemaInput = """
@@ -23,11 +48,7 @@ class ParquetTypeVisitorTest {
                 }
                 """;
 
-        MessageType messageType = MessageTypeParser.parseMessageType(schemaInput);
-
-        ParquetTypeVisitor visitor = new ParquetTypeVisitor();
-        messageType.accept(visitor);
-
+        parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
         assertEquals("test_schema", schema.name());
@@ -61,18 +82,54 @@ class ParquetTypeVisitorTest {
     }
 
     @Test
+    void visitNestedSchema() {
+        String schemaInput = """
+                message test_schema {
+                    required group address {
+                        required binary street (UTF8);
+                        required group tenant {
+                          required binary name (UTF8);
+                        }
+                    } 
+                }
+                """;
+
+        parseSchema(schemaInput).accept(visitor);
+        ParquetSchemaNode schema = visitor.getSchema();
+
+        assertEquals("test_schema", schema.name());
+        assertEquals(ParquetSchemaType.MESSAGE, schema.type());
+        assertNull(schema.primitiveTypeName());
+        assertEquals(1, schema.children().size());
+
+        ParquetSchemaNode firstChild = schema.children().get(0);
+        assertEquals("address", firstChild.name());
+        assertEquals(ParquetSchemaType.GROUP, firstChild.type());
+        assertNull(firstChild.primitiveTypeName());
+        assertEquals(2, firstChild.children().size());
+
+        assertEquals("street", firstChild.children().get(0).name());
+
+        ParquetSchemaNode nestedChild = firstChild.children().get(1);
+        assertEquals("tenant", nestedChild.name());
+        assertEquals(ParquetSchemaType.GROUP, nestedChild.type());
+        assertEquals(1, nestedChild.children().size());
+        assertEquals("name", nestedChild.children().get(0).name());
+    }
+
+    @Test
     void visitEmptySchema() {
         String schemaInput = "message test_schema {}";
 
-        MessageType messageType = MessageTypeParser.parseMessageType(schemaInput);
-
-        ParquetTypeVisitor visitor = new ParquetTypeVisitor();
-        messageType.accept(visitor);
-
+        parseSchema(schemaInput).accept(visitor);
         ParquetSchemaNode schema = visitor.getSchema();
 
         assertEquals("test_schema", schema.name());
         assertEquals(ParquetSchemaType.MESSAGE, schema.type());
         assertTrue(schema.children().isEmpty());
+    }
+
+    private MessageType parseSchema(String schemaInput) {
+        return MessageTypeParser.parseMessageType(schemaInput);
     }
 }
