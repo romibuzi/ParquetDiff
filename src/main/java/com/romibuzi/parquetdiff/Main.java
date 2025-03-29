@@ -1,5 +1,8 @@
-package com.romibuzi;
+package com.romibuzi.parquetdiff;
 
+import com.romibuzi.parquetdiff.models.ParquetDetails;
+import com.romibuzi.parquetdiff.models.ParquetPartitions;
+import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -37,10 +40,10 @@ public class Main {
 
         ParquetDetails parquetDetails = parquets.get(0);
         ParquetTypeVisitor parquetTypeVisitor = new ParquetTypeVisitor();
-        MessageType schema = extractSchema(parquetDetails.path().toString());
-        if (schema != null) {
-            schema.accept(parquetTypeVisitor);
-            ParquetSchemaNode schemaRepresentation = parquetTypeVisitor.getSchemaRepresentation();
+        MessageType messageType = extractSchema(parquetDetails.path().toString());
+        if (messageType != null) {
+            messageType.accept(parquetTypeVisitor);
+            ParquetSchemaNode schema = parquetTypeVisitor.getSchema();
         }
     }
 
