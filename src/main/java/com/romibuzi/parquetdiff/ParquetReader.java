@@ -29,8 +29,13 @@ public class ParquetReader {
         this.typeVisitor = new ParquetTypeVisitor();
     }
 
-    public List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
-        return readAllParquetInDirectory(new Path(parquetDirectory));
+    public List<ParquetDetails> readParquetDirectory(String parquetDirectory) throws IOException {
+        Path parquetDirectoryPath = new Path(parquetDirectory);
+        if (!fileSystem.exists(parquetDirectoryPath)) {
+            throw new IOException("Parquet directory not found: " + parquetDirectory);
+        }
+
+        return readAllParquetInDirectory(parquetDirectoryPath);
     }
 
     private List<ParquetDetails> readAllParquetInDirectory(Path path) {

@@ -13,23 +13,50 @@ import java.util.List;
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException {
-        if (args.length < 1) {
-            System.out.println("Usage: ParquetDiff <parquet-path>");
+    private final ParquetReader parquetReader;
+
+    public Main(FileSystem fileSystem) {
+        parquetReader = new ParquetReader(fileSystem);
+    }
+
+    public List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
+        try {
+            return parquetReader.readParquetDirectory(parquetDirectory);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
             System.exit(1);
         }
-        String parquetPath = args[0];
+        throw new RuntimeException();
+    }
 
-        Configuration conf = new Configuration();
-        FileSystem fileSystem = FileSystem.get(conf);
-
-        ParquetReader parquetReader = new ParquetReader(fileSystem);
-        List<ParquetDetails> parquets = parquetReader.readParquetDirectory(parquetPath);
+    public void run(String parquetDirectory) {
+        List<ParquetDetails> parquets = readParquetDirectory(parquetDirectory);
+        LOGGER.info("Found {} parquets files", parquets.size());
 
         List<ParquetPartitions> differentPartitionsStructure = ParquetCompare.findDifferentPartitionsStructure(parquets);
 
         if (differentPartitionsStructure.isEmpty()) {
             System.out.println("All Parquet partitions have the same structure");
         }
+    }
+
+    private static FileSystem initFileSystem() {
+        try {
+            return FileSystem.get(new Configuration());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+        throw new RuntimeException();
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Usage: ParquetDiff <parquet-path>");
+            System.exit(1);
+        }
+
+        Main main = new Main(initFileSystem());
+        main.run(args[0]);
     }
 }

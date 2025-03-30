@@ -11,8 +11,7 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -39,15 +38,32 @@ class ParquetReaderTest {
     }
 
     @Test
+    void readParquetDirectoryNotFound() throws IOException {
+        FileSystem fileSystem = mock(FileSystem.class);
+        Path parquetDirectoryPath = new Path(parquetDirectory.toString());
+        when(fileSystem.exists(eq(parquetDirectoryPath))).thenReturn(false);
+
+        ParquetReader parquetReader = new ParquetReader(fileSystem);
+
+        assertThrows(IOException.class, () -> parquetReader.readParquetDirectory(parquetDirectory.toString()));
+
+        verify(fileSystem).exists(eq(parquetDirectoryPath));
+        verifyNoMoreInteractions(fileSystem);
+    }
+
+    @Test
     void readParquetDirectoryWithError() throws IOException {
         FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.listStatus(eq(new Path(parquetDirectory.toString())))).thenThrow(IOException.class);
+        Path parquetDirectoryPath = new Path(parquetDirectory.toString());
+        when(fileSystem.exists(eq(parquetDirectoryPath))).thenReturn(true);
+        when(fileSystem.listStatus(eq(parquetDirectoryPath))).thenThrow(IOException.class);
 
         ParquetReader parquetReader = new ParquetReader(fileSystem);
         List<ParquetDetails> results = parquetReader.readParquetDirectory(parquetDirectory.toString());
 
         assertTrue(results.isEmpty());
-        verify(fileSystem).listStatus(eq(new Path(parquetDirectory.toString())));
+        verify(fileSystem).exists(eq(parquetDirectoryPath));
+        verify(fileSystem).listStatus(eq(parquetDirectoryPath));
         verifyNoMoreInteractions(fileSystem);
     }
 
