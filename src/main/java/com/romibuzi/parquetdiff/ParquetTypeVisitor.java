@@ -6,7 +6,10 @@ import org.apache.parquet.schema.*;
 
 import java.util.Stack;
 
-public class ParquetTypeVisitor implements TypeVisitor {
+/**
+ * A TypeVisitor implementation to extract a given {@link MessageType} into a {@link ParquetSchemaNode}.
+ */
+public final class ParquetTypeVisitor implements TypeVisitor {
     private ParquetSchemaNode root;
     private final Stack<ParquetSchemaNode> nodeStack = new Stack<>();
 
@@ -41,6 +44,9 @@ public class ParquetTypeVisitor implements TypeVisitor {
         nodeStack.peek().addChild(node);
     }
 
+    /**
+     * @return The extracted {@link ParquetSchemaNode} schema representation.
+     */
     public ParquetSchemaNode getSchema() {
         return root;
     }

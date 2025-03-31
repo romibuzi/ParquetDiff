@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParquetReader {
+public final class ParquetReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParquetReader.class);
     private static final String PARQUET_EXTENSION = ".parquet";
     private static final ParquetReadOptions PARQUET_READ_OPTIONS = ParquetReadOptions.builder().build();
@@ -29,6 +29,13 @@ public class ParquetReader {
         this.typeVisitor = new ParquetTypeVisitor();
     }
 
+    /**
+     * Extract partitions and files metadata from a Parquet directory.
+     *
+     * @param parquetDirectory the Parquet directory to analyze.
+     * @return All Parquet files extracted as {@link ParquetDetails}.
+     * @throws IOException If parquetDirectory is not found or if any error happens while listing parquet files.
+     */
     public List<ParquetDetails> readParquetDirectory(String parquetDirectory) throws IOException {
         Path parquetDirectoryPath = new Path(parquetDirectory);
         if (!fileSystem.exists(parquetDirectoryPath)) {

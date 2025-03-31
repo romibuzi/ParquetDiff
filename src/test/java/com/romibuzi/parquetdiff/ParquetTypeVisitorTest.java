@@ -51,10 +51,13 @@ class ParquetTypeVisitorTest {
                 List.of(
                         new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32),
                         new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, List.of(
-                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY),
-                                new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT64)
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
+                                        PrimitiveType.PrimitiveTypeName.BINARY),
+                                new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE,
+                                        PrimitiveType.PrimitiveTypeName.INT64)
                         )),
-                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY)
+                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                                PrimitiveType.PrimitiveTypeName.BINARY)
                 ));
 
         assertEquals(expected, schema);
@@ -80,9 +83,11 @@ class ParquetTypeVisitorTest {
                 null,
                 List.of(
                         new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, List.of(
-                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY),
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
+                                        PrimitiveType.PrimitiveTypeName.BINARY),
                                 new ParquetSchemaNode("tenant", ParquetSchemaType.GROUP, null, List.of(
-                                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.BINARY)
+                                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                                                PrimitiveType.PrimitiveTypeName.BINARY)
                                 ))
                         ))
                 ));

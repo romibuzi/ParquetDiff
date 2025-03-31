@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-public class Main {
+public final class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private final ParquetReader parquetReader;
@@ -19,7 +19,22 @@ public class Main {
         parquetReader = new ParquetReader(fileSystem);
     }
 
-    public List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
+    /**
+     * @param parquetDirectory the Parquet directory to analyze.
+     */
+    public void run(String parquetDirectory) {
+        List<ParquetDetails> parquets = readParquetDirectory(parquetDirectory);
+        LOGGER.info("Found {} parquets files", parquets.size());
+
+        List<ParquetPartitions> differentPartitionsStructure =
+                ParquetCompare.findDifferentPartitionsStructure(parquets);
+
+        if (differentPartitionsStructure.isEmpty()) {
+            System.out.println("All Parquet partitions have the same structure");
+        }
+    }
+
+    private List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
         try {
             return parquetReader.readParquetDirectory(parquetDirectory);
         } catch (IOException e) {
@@ -27,17 +42,6 @@ public class Main {
             System.exit(1);
         }
         throw new RuntimeException();
-    }
-
-    public void run(String parquetDirectory) {
-        List<ParquetDetails> parquets = readParquetDirectory(parquetDirectory);
-        LOGGER.info("Found {} parquets files", parquets.size());
-
-        List<ParquetPartitions> differentPartitionsStructure = ParquetCompare.findDifferentPartitionsStructure(parquets);
-
-        if (differentPartitionsStructure.isEmpty()) {
-            System.out.println("All Parquet partitions have the same structure");
-        }
     }
 
     private static FileSystem initFileSystem() {
@@ -50,6 +54,9 @@ public class Main {
         throw new RuntimeException();
     }
 
+    /**
+     * @param args CLI arguments.
+     */
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("Usage: ParquetDiff <parquet-path>");
