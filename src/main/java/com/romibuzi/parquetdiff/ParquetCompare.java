@@ -79,7 +79,7 @@ public final class ParquetCompare {
                 findSchemasDifferencesRecursive(
                         children1.get(childName),
                         children2.get(childName),
-                        buildSchemaPath(currentPath, childName),
+                        currentPath,
                         diff);
             }
         }
