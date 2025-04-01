@@ -4,6 +4,9 @@ import org.apache.parquet.schema.PrimitiveType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Represents a node in a Parquet schema hierarchy.
@@ -30,7 +33,7 @@ public record ParquetSchemaNode(String name,
     }
 
     /**
-     * Adds a child node to this schema node.
+     * Adds a child node to this schema/group node.
      *
      * @param child The child node to be added.
      */
@@ -43,7 +46,14 @@ public record ParquetSchemaNode(String name,
     }
 
     /**
-     * @return true if node have children
+     * @return A Map representation of node's children.
+     */
+    public Map<String, ParquetSchemaNode> getChildrenMap() {
+        return children.stream().collect(Collectors.toMap(ParquetSchemaNode::name, Function.identity()));
+    }
+
+    /**
+     * @return true if node have children.
      */
     public boolean hasChildren() {
         return !children.isEmpty();

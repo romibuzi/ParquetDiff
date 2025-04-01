@@ -2,7 +2,7 @@ package com.romibuzi.parquetdiff.models;
 
 public enum ParquetSchemaType {
     /**
-     * The root element of a Parquet schema.
+     * Root element of a Parquet schema.
      * A MESSAGE encapsulates the entire schema structure.
      */
     MESSAGE,

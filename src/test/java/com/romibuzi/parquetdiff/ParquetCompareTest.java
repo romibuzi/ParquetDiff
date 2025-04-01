@@ -1,9 +1,6 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetDetails;
-import com.romibuzi.parquetdiff.models.ParquetPartitions;
-import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
-import com.romibuzi.parquetdiff.models.ParquetSchemaType;
+import com.romibuzi.parquetdiff.models.*;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.schema.PrimitiveType;
 import org.junit.jupiter.api.Test;
@@ -11,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ParquetCompareTest {
     @Test
@@ -49,5 +45,88 @@ class ParquetCompareTest {
         assertEquals(2, results.size());
         assertEquals(List.of("date", "country"), results.get(0).keys());
         assertEquals(List.of("date"), results.get(1).keys());
+    }
+
+    @Test
+    void findSchemasDifferencesIdentical() {
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+
+        assertFalse(ParquetCompare.findSchemasDifferences(firstSchema, secondSchema).hasDifferences());
+    }
+
+    @Test
+    void findSchemasDifferencesIdenticalWithFields() {
+        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        firstSchema.addChild(id);
+        firstSchema.addChild(name);
+        secondSchema.addChild(id);
+        secondSchema.addChild(name);
+
+        assertFalse(ParquetCompare.findSchemasDifferences(firstSchema, secondSchema).hasDifferences());
+    }
+
+    @Test
+    void findSchemasDifferencesAdditionalField() {
+        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        firstSchema.addChild(id);
+        secondSchema.addChild(id);
+        secondSchema.addChild(name);
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of("test_schema.name"), result.additionalNodes());
+    }
+
+    @Test
+    void findSchemasDifferencesMissingField() {
+        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        firstSchema.addChild(id);
+        firstSchema.addChild(name);
+        secondSchema.addChild(id);
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of("test_schema.name"), result.missingNodes());
+    }
+
+    @Test
+    void findSchemasDifferencesAdditionalAndMissingField() {
+        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+        ParquetSchemaNode email = new ParquetSchemaNode("email", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        firstSchema.addChild(id);
+        firstSchema.addChild(name);
+        secondSchema.addChild(id);
+        secondSchema.addChild(email);
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of("test_schema.name"), result.missingNodes());
+        assertEquals(List.of("test_schema.email"), result.additionalNodes());
     }
 }

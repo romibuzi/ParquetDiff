@@ -2,12 +2,10 @@ package com.romibuzi.parquetdiff;
 
 import com.romibuzi.parquetdiff.models.ParquetDetails;
 import com.romibuzi.parquetdiff.models.ParquetPartitions;
+import com.romibuzi.parquetdiff.models.ParquetSchemaDiff;
 import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public final class ParquetCompare {
     private ParquetCompare() {
@@ -50,9 +48,50 @@ public final class ParquetCompare {
      *
      * @param schema1 The first schema.
      * @param schema2 The second schema.
-     * @return true if no differences are found false otherwise.
+     * @return Differences found.
      */
-    public static boolean compareSchemas(ParquetSchemaNode schema1, ParquetSchemaNode schema2) {
-        return true;
+    public static ParquetSchemaDiff findSchemasDifferences(ParquetSchemaNode schema1, ParquetSchemaNode schema2) {
+        ParquetSchemaDiff diff = new ParquetSchemaDiff();
+        findSchemasDifferencesRecursive(schema1, schema2, "", diff);
+        return diff;
+    }
+
+    private static void findSchemasDifferencesRecursive(ParquetSchemaNode node1,
+                                                        ParquetSchemaNode node2,
+                                                        String schemaPath,
+                                                        ParquetSchemaDiff diff) {
+        String currentPath = buildSchemaPath(schemaPath, node1.name());
+
+        if (!node1.name().equals(node2.name())) {
+            System.out.println("Name mismatch at " + currentPath + " (" + node1.name() + " vs " + node2.name() + ")");
+        }
+        if (!node1.type().equals(node2.type())) {
+            System.out.println("Type mismatch at " + currentPath + " (" + node1.type() + " vs " + node2.type() + ")");
+        }
+
+        Map<String, ParquetSchemaNode> children1 = node1.getChildrenMap();
+        Map<String, ParquetSchemaNode> children2 = node2.getChildrenMap();
+
+        for (String childName : children1.keySet()) {
+            if (!children2.containsKey(childName)) {
+                diff.addMissingNode(buildSchemaPath(currentPath, childName));
+            } else {
+                findSchemasDifferencesRecursive(
+                        children1.get(childName),
+                        children2.get(childName),
+                        buildSchemaPath(currentPath, childName),
+                        diff);
+            }
+        }
+
+        for (String childName : children2.keySet()) {
+            if (!children1.containsKey(childName)) {
+                diff.addAdditionalNode(buildSchemaPath(currentPath, childName));
+            }
+        }
+    }
+
+    private static String buildSchemaPath(String parentPath, String childName) {
+        return parentPath.isEmpty() ? childName : parentPath + "." + childName;
     }
 }
