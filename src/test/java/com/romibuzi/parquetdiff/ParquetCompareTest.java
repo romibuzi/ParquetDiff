@@ -202,6 +202,24 @@ class ParquetCompareTest {
         assertEquals(List.of("root.4.3.2.1.name"), result.additionalNodes());
     }
 
+    @Test
+    void findSchemasDifferencesDifferentPrimitiveFieldTypeDeeplyNested() {
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT64);
+
+        int depth = 5;
+        ParquetSchemaNode firstSchema = createNestedSchema("root", id32, depth);
+        ParquetSchemaNode secondSchema = createNestedSchema("root", id64, depth);
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of(new ParquetSchemaPrimitiveTypeDiff("root.4.3.2.1.id",
+                        PrimitiveType.PrimitiveTypeName.INT32, PrimitiveType.PrimitiveTypeName.INT64)),
+                result.primitiveTypeDiffs());
+    }
+
     private ParquetSchemaNode createNestedSchema(String baseName, ParquetSchemaNode finalPrimitiveNode, int depth) {
         if (depth == 0) {
             return finalPrimitiveNode;
