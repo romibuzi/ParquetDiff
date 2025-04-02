@@ -108,7 +108,7 @@
         <!-- Checks for imports                              -->
         <!-- See https://checkstyle.org/checks/imports/index.html -->
         <module name="AvoidStarImport">
-            <property name="excludes" value="java.util,org.apache.parquet.schema"/>
+            <property name="excludes" value="java.util,com.romibuzi.parquetdiff.models,org.apache.parquet.schema"/>
         </module>
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>

@@ -62,12 +62,10 @@ class ParquetCompareTest {
         ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
                 PrimitiveType.PrimitiveTypeName.BINARY);
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
-        firstSchema.addChild(id);
-        firstSchema.addChild(name);
-        secondSchema.addChild(id);
-        secondSchema.addChild(name);
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id, name));
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id, name));
 
         assertFalse(ParquetCompare.findSchemasDifferences(firstSchema, secondSchema).hasDifferences());
     }
@@ -107,6 +105,42 @@ class ParquetCompareTest {
     }
 
     @Test
+    void findSchemasDifferencesDifferentFieldType() {
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.GROUP, null);
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT64);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id32));
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id64));
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of(new ParquetSchemaTypeDiff("test_schema.id", ParquetSchemaType.GROUP,
+                ParquetSchemaType.PRIMITIVE)), result.typeDiffs());
+    }
+
+    @Test
+    void findSchemasDifferencesDifferentPrimitiveFieldType() {
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT64);
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id32));
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                List.of(id64));
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of(new ParquetSchemaPrimitiveTypeDiff("test_schema.id",
+                        PrimitiveType.PrimitiveTypeName.INT32, PrimitiveType.PrimitiveTypeName.INT64)),
+                result.primitiveTypeDiffs());
+    }
+
+    @Test
     void findSchemasDifferencesAdditionalAndMissingField() {
         ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
                 PrimitiveType.PrimitiveTypeName.INT32);
@@ -127,24 +161,27 @@ class ParquetCompareTest {
     }
 
     @Test
-    void findSchemasDifferencesNestedMissingField() {
+    void findSchemasDifferencesAdditionalAndMissingFieldNested() {
         ParquetSchemaNode street = new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
                 PrimitiveType.PrimitiveTypeName.BINARY);
         ParquetSchemaNode zipCode = new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE,
                 PrimitiveType.PrimitiveTypeName.BINARY);
+        ParquetSchemaNode city = new ParquetSchemaNode("city", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
 
-        ParquetSchemaNode address = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
+        ParquetSchemaNode firstAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
                 List.of(street, zipCode));
-        ParquetSchemaNode addressWithoutZipCode = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
-                List.of(street));
+        ParquetSchemaNode secondAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
+                List.of(street, city));
 
         ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
-                List.of(address));
+                List.of(firstAddress));
         ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
-                List.of(addressWithoutZipCode));
+                List.of(secondAddress));
 
         ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
         assertEquals(List.of("test_schema.address.zip_code"), result.missingNodes());
+        assertEquals(List.of("test_schema.address.city"), result.additionalNodes());
     }
 }

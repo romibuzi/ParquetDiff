@@ -38,7 +38,7 @@ public record ParquetSchemaNode(String name,
      * @param child The child node to be added.
      */
     public void addChild(ParquetSchemaNode child) {
-        if (ParquetSchemaType.PRIMITIVE.equals(type)) {
+        if (ParquetSchemaType.PRIMITIVE == type) {
             throw new UnsupportedOperationException("PRIMITIVE field can't have child field");
         }
 
