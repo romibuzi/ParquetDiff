@@ -184,4 +184,30 @@ class ParquetCompareTest {
         assertEquals(List.of("test_schema.address.zip_code"), result.missingNodes());
         assertEquals(List.of("test_schema.address.city"), result.additionalNodes());
     }
+
+    @Test
+    void findSchemasDifferencesAdditionalAndMissingFieldDeeplyNested() {
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY);
+
+        int depth = 5;
+        ParquetSchemaNode firstSchema = createNestedSchema("root", id32, depth);
+        ParquetSchemaNode secondSchema = createNestedSchema("root", name, depth);
+
+        ParquetSchemaDiff result = ParquetCompare.findSchemasDifferences(firstSchema, secondSchema);
+        assertTrue(result.hasDifferences());
+        assertEquals(List.of("root.4.3.2.1.id"), result.missingNodes());
+        assertEquals(List.of("root.4.3.2.1.name"), result.additionalNodes());
+    }
+
+    private ParquetSchemaNode createNestedSchema(String baseName, ParquetSchemaNode finalPrimitiveNode, int depth) {
+        if (depth == 0) {
+            return finalPrimitiveNode;
+        }
+
+        ParquetSchemaNode child = createNestedSchema(String.valueOf(depth - 1), finalPrimitiveNode, depth - 1);
+        return new ParquetSchemaNode(baseName, ParquetSchemaType.GROUP, null, List.of(child));
+    }
 }

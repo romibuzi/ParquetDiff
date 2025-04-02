@@ -45,7 +45,7 @@ public final class ParquetCompare {
      *
      * @param schema1 The first schema.
      * @param schema2 The second schema.
-     * @return Differences found.
+     * @return A {@link ParquetSchemaDiff} instance with all differences found.
      */
     public static ParquetSchemaDiff findSchemasDifferences(ParquetSchemaNode schema1, ParquetSchemaNode schema2) {
         ParquetSchemaDiff diff = new ParquetSchemaDiff();
@@ -59,7 +59,7 @@ public final class ParquetCompare {
                                                     ParquetSchemaDiff diff) {
         String currentPath = buildSchemaPath(schemaPath, node1.name());
 
-        // TODO handle that outside the traversal of nodes as it can only happens at the root level
+        // TODO handle outside the traversal of nodes as it can only happen at the root level
         if (!node1.name().equals(node2.name())) {
             System.out.println("Name mismatch at " + currentPath + " (" + node1.name() + " vs " + node2.name() + ")");
         }
