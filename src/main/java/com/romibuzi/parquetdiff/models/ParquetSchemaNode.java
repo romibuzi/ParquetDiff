@@ -4,6 +4,7 @@ import org.apache.parquet.schema.PrimitiveType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,5 +58,31 @@ public record ParquetSchemaNode(String name,
      */
     public boolean hasChildren() {
         return !children.isEmpty();
+    }
+
+    /**
+     * Prints the Schema from the Root node in a tree format.
+     */
+    public void printSchema() {
+        if (ParquetSchemaType.MESSAGE != type) {
+            throw new UnsupportedOperationException("printSchema() can only be applied from the Root node");
+        }
+        printNode(this, 0);
+    }
+
+    private void printNode(ParquetSchemaNode node, int indent) {
+        String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
+
+        String infos = switch (node.type()) {
+            case MESSAGE -> "root";
+            case GROUP -> "group";
+            case PRIMITIVE -> node.primitiveTypeName().name().toLowerCase(Locale.ROOT);
+        };
+
+        System.out.println(prefix + node.name() + ": " + infos);
+
+        for (ParquetSchemaNode child : node.children()) {
+            printNode(child, indent + 2);
+        }
     }
 }
