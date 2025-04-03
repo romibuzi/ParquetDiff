@@ -2,6 +2,7 @@ package com.romibuzi.parquetdiff;
 
 import com.romibuzi.parquetdiff.models.ParquetDetails;
 import com.romibuzi.parquetdiff.models.ParquetPartitions;
+import com.romibuzi.parquetdiff.models.ParquetSchemaDiff;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
@@ -31,6 +32,17 @@ public final class Main {
 
         if (differentPartitionsStructure.isEmpty()) {
             System.out.println("All Parquet partitions have the same structure");
+        }
+
+        List<ParquetSchemaDiff> schemasDifferences = ParquetCompare.findSchemasDifferences(parquets);
+        if (schemasDifferences.isEmpty()) {
+            System.out.println("All Parquet partitions have the same schema");
+        } else {
+            for (ParquetSchemaDiff schemasDifference : schemasDifferences) {
+                // TODO better printing
+                System.out.println("Schema differences found:");
+                System.out.println(schemasDifference);
+            }
         }
     }
 

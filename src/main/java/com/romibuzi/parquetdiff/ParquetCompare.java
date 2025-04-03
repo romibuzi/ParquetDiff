@@ -12,12 +12,12 @@ public final class ParquetCompare {
      * Checks if all given {@link ParquetPartitions} have the same partition keys.
      * Any partition with a different set of keys is included in the result.
      *
-     * @param parquetDetails Parquets to find differences.
+     * @param parquets Parquets to find differences.
      * @return A list of {@link ParquetPartitions} where the structure differs from the first partition.
      * If differences are found, the first element in the list is the reference partition.
      */
-    public static List<ParquetPartitions> findDifferentPartitionsStructure(List<ParquetDetails> parquetDetails) {
-        List<ParquetPartitions> partitions = parquetDetails.stream().map(ParquetDetails::partitions).toList();
+    public static List<ParquetPartitions> findDifferentPartitionsStructure(List<ParquetDetails> parquets) {
+        List<ParquetPartitions> partitions = parquets.stream().map(ParquetDetails::partitions).toList();
         if (partitions.isEmpty()) {
             return Collections.emptyList();
         }
@@ -41,22 +41,50 @@ public final class ParquetCompare {
     }
 
     /**
-     * Compare two schemas and find differences.
+     * Compare all Parquets schemas and find differences.
      *
-     * @param schema1 The first schema.
-     * @param schema2 The second schema.
+     * @param parquets Parquets to find schemas differences.
+     * @return A list of {@link ParquetSchemaDiff} instances with all differences found.
+     */
+    public static List<ParquetSchemaDiff> findSchemasDifferences(List<ParquetDetails> parquets) {
+        if (parquets.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<ParquetSchemaDiff> results = new ArrayList<>();
+
+        Iterator<ParquetDetails> iterator = parquets.iterator();
+        ParquetDetails reference = iterator.next();
+
+        while (iterator.hasNext()) {
+            ParquetDetails parquetDetails = iterator.next();
+            ParquetSchemaDiff diff = compareSchemas(reference, parquetDetails);
+            if (diff.hasDifferences()) {
+                results.add(diff);
+                reference = parquetDetails;
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Compare two ParquetDetails schemas and find differences.
+     *
+     * @param firstParquet  The first parquet.
+     * @param secondParquet The second parquet.
      * @return A {@link ParquetSchemaDiff} instance with all differences found.
      */
-    public static ParquetSchemaDiff findSchemasDifferences(ParquetSchemaNode schema1, ParquetSchemaNode schema2) {
-        ParquetSchemaDiff diff = new ParquetSchemaDiff();
-        findSchemasNodesDifferences(schema1, schema2, "", diff);
+    public static ParquetSchemaDiff compareSchemas(ParquetDetails firstParquet, ParquetDetails secondParquet) {
+        ParquetSchemaDiff diff = new ParquetSchemaDiff(firstParquet, secondParquet);
+        compareSchemasNodes(firstParquet.schema(), secondParquet.schema(), "", diff);
         return diff;
     }
 
-    private static void findSchemasNodesDifferences(ParquetSchemaNode node1,
-                                                    ParquetSchemaNode node2,
-                                                    String schemaPath,
-                                                    ParquetSchemaDiff diff) {
+    private static void compareSchemasNodes(ParquetSchemaNode node1,
+                                            ParquetSchemaNode node2,
+                                            String schemaPath,
+                                            ParquetSchemaDiff diff) {
         String currentPath = buildSchemaPath(schemaPath, node1.name());
 
         // TODO handle outside the traversal of nodes as it can only happen at the root level
@@ -73,7 +101,7 @@ public final class ParquetCompare {
             if (!children2.containsKey(childName)) {
                 diff.addMissingNode(buildSchemaPath(currentPath, childName));
             } else {
-                findSchemasNodesDifferences(
+                compareSchemasNodes(
                         children1.get(childName),
                         children2.get(childName),
                         currentPath,

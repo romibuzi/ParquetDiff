@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record ParquetSchemaDiff(List<String> additionalNodes,
+public record ParquetSchemaDiff(ParquetDetails firstParquet,
+                                ParquetDetails secondParquet,
+                                List<String> additionalNodes,
                                 List<String> missingNodes,
                                 List<ParquetSchemaTypeDiff> typeDiffs,
                                 List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs) {
-    public ParquetSchemaDiff() {
-        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    public ParquetSchemaDiff(ParquetDetails firstParquet, ParquetDetails secondParquet) {
+        this(firstParquet, secondParquet, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public void addAdditionalNode(String nodePath) {
