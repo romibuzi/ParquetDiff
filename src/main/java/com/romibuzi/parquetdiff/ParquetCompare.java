@@ -75,7 +75,7 @@ public final class ParquetCompare {
      * @param secondParquet The second parquet.
      * @return A {@link ParquetSchemaDiff} instance with all differences found.
      */
-    public static ParquetSchemaDiff compareSchemas(ParquetDetails firstParquet, ParquetDetails secondParquet) {
+    static ParquetSchemaDiff compareSchemas(ParquetDetails firstParquet, ParquetDetails secondParquet) {
         ParquetSchemaDiff diff = new ParquetSchemaDiff(firstParquet, secondParquet);
         compareSchemasNodes(firstParquet.schema(), secondParquet.schema(), "", diff);
         return diff;
