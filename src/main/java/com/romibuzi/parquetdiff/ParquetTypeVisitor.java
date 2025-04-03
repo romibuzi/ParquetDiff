@@ -16,22 +16,22 @@ public final class ParquetTypeVisitor implements TypeVisitor {
     @Override
     public void visit(MessageType messageType) {
         root = new ParquetSchemaNode(messageType.getName(), ParquetSchemaType.MESSAGE, null);
-        nodeStack.push(root);
+        enterNewParent(root);
         for (Type field : messageType.getFields()) {
             field.accept(this);
         }
-        nodeStack.pop();
+        exitCurrentParent();
     }
 
     @Override
     public void visit(GroupType groupType) {
         ParquetSchemaNode node = new ParquetSchemaNode(groupType.getName(), ParquetSchemaType.GROUP, null);
-        nodeStack.peek().addChild(node);
-        nodeStack.push(node);
+        attachToCurrentParent(node);
+        enterNewParent(node);
         for (Type field : groupType.getFields()) {
             field.accept(this);
         }
-        nodeStack.pop();
+        exitCurrentParent();
     }
 
     @Override
@@ -41,7 +41,7 @@ public final class ParquetTypeVisitor implements TypeVisitor {
                 ParquetSchemaType.PRIMITIVE,
                 primitiveType.getPrimitiveTypeName()
         );
-        nodeStack.peek().addChild(node);
+        attachToCurrentParent(node);
     }
 
     /**
@@ -49,5 +49,21 @@ public final class ParquetTypeVisitor implements TypeVisitor {
      */
     public ParquetSchemaNode getSchema() {
         return root;
+    }
+
+    private void attachToCurrentParent(ParquetSchemaNode node) {
+        getCurrentParent().addChild(node);
+    }
+
+    private void enterNewParent(ParquetSchemaNode node) {
+        nodeStack.push(node);
+    }
+
+    private void exitCurrentParent() {
+        nodeStack.pop();
+    }
+
+    private ParquetSchemaNode getCurrentParent() {
+        return nodeStack.peek();
     }
 }
