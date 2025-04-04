@@ -65,7 +65,7 @@ public record ParquetSchemaNode(String name,
      */
     public void printSchema() {
         if (ParquetSchemaType.MESSAGE != type) {
-            throw new UnsupportedOperationException("printSchema() can only be applied from the Root node");
+            throw new UnsupportedOperationException("printSchema() can only be applied to the Root node");
         }
         printNode(this, 0);
     }
@@ -75,7 +75,9 @@ public record ParquetSchemaNode(String name,
 
         String infos = switch (node.type()) {
             case MESSAGE -> "root";
-            case GROUP -> "group";
+            case GROUP -> "struct";
+            case LIST -> "list";
+            case MAP -> "map";
             case PRIMITIVE -> node.primitiveTypeName().name().toLowerCase(Locale.ROOT);
         };
 

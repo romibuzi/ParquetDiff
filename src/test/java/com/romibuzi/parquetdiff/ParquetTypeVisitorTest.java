@@ -31,6 +31,51 @@ class ParquetTypeVisitorTest {
     }
 
     @Test
+    void visitSchemaWithListField() {
+        String schemaInput = """
+                message test_schema {
+                    repeated group list_field (LIST) {
+                        required binary value (STRING);
+                    }
+                }
+                """;
+
+        ParquetSchemaNode schema = extractSchema(schemaInput);
+        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+                new ParquetSchemaNode("list_field", ParquetSchemaType.LIST, null, List.of(
+                        new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE,
+                                PrimitiveType.PrimitiveTypeName.BINARY)
+                ))
+        ));
+
+        assertEquals(expected, schema);
+    }
+
+    @Test
+    void visitSchemaWithMapField() {
+        String schemaInput = """
+                message test_schema {
+                    repeated group map_field (MAP) {
+                        required binary key (STRING);
+                        optional int32 value;
+                    }
+                }
+                """;
+
+        ParquetSchemaNode schema = extractSchema(schemaInput);
+        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+                new ParquetSchemaNode("map_field", ParquetSchemaType.MAP, null, List.of(
+                        new ParquetSchemaNode("key", ParquetSchemaType.PRIMITIVE,
+                                PrimitiveType.PrimitiveTypeName.BINARY),
+                        new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE,
+                                PrimitiveType.PrimitiveTypeName.INT32)
+                ))
+        ));
+
+        assertEquals(expected, schema);
+    }
+
+    @Test
     void visitSchema() {
         String schemaInput = """
                 message test_schema {

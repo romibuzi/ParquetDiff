@@ -3,6 +3,8 @@ package com.romibuzi.parquetdiff;
 import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
 import com.romibuzi.parquetdiff.models.ParquetSchemaType;
 import org.apache.parquet.schema.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Stack;
 
@@ -10,6 +12,7 @@ import java.util.Stack;
  * A TypeVisitor implementation to extract a given {@link MessageType} into a {@link ParquetSchemaNode}.
  */
 public final class ParquetTypeVisitor implements TypeVisitor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParquetTypeVisitor.class);
     private ParquetSchemaNode root;
     private final Stack<ParquetSchemaNode> nodeStack = new Stack<>();
 
@@ -25,7 +28,7 @@ public final class ParquetTypeVisitor implements TypeVisitor {
 
     @Override
     public void visit(GroupType groupType) {
-        ParquetSchemaNode node = new ParquetSchemaNode(groupType.getName(), ParquetSchemaType.GROUP, null);
+        ParquetSchemaNode node = new ParquetSchemaNode(groupType.getName(), findGroupType(groupType), null);
         attachToCurrentParent(node);
         enterNewParent(node);
         for (Type field : groupType.getFields()) {
@@ -36,11 +39,8 @@ public final class ParquetTypeVisitor implements TypeVisitor {
 
     @Override
     public void visit(PrimitiveType primitiveType) {
-        ParquetSchemaNode node = new ParquetSchemaNode(
-                primitiveType.getName(),
-                ParquetSchemaType.PRIMITIVE,
-                primitiveType.getPrimitiveTypeName()
-        );
+        ParquetSchemaNode node = new ParquetSchemaNode(primitiveType.getName(), ParquetSchemaType.PRIMITIVE,
+                primitiveType.getPrimitiveTypeName());
         attachToCurrentParent(node);
     }
 
@@ -49,6 +49,22 @@ public final class ParquetTypeVisitor implements TypeVisitor {
      */
     public ParquetSchemaNode getSchema() {
         return root;
+    }
+
+    ParquetSchemaType findGroupType(GroupType groupType) {
+        LogicalTypeAnnotation logicalType = groupType.getLogicalTypeAnnotation();
+        if (logicalType == null) {
+            return ParquetSchemaType.GROUP;
+        }
+
+        if (logicalType == LogicalTypeAnnotation.listType()) {
+            return ParquetSchemaType.LIST;
+        } else if (logicalType == LogicalTypeAnnotation.mapType()) {
+            return ParquetSchemaType.MAP;
+        }
+
+        LOGGER.warn("Unrecognized Group logical type: {}", logicalType);
+        return ParquetSchemaType.GROUP;
     }
 
     private void attachToCurrentParent(ParquetSchemaNode node) {
