@@ -11,4 +11,9 @@ public record ParquetPartition(String key, String value) {
         String[] splits = partition.split("=", 2);
         return new ParquetPartition(splits[0], splits[1]);
     }
+
+    @Override
+    public String toString() {
+        return key + "=" + value;
+    }
 }

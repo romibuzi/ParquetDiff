@@ -38,11 +38,7 @@ public final class Main {
         if (schemasDifferences.isEmpty()) {
             System.out.println("All Parquet partitions have the same schema");
         } else {
-            for (ParquetSchemaDiff schemasDifference : schemasDifferences) {
-                // TODO better printing
-                System.out.println("Schema differences found:");
-                System.out.println(schemasDifference);
-            }
+            schemasDifferences.forEach(ParquetSchemaDiff::printDifferences);
         }
     }
 
@@ -50,7 +46,7 @@ public final class Main {
         try {
             return parquetReader.readParquetDirectory(parquetDirectory);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(1);
         }
         throw new RuntimeException();
@@ -60,7 +56,7 @@ public final class Main {
         try {
             return FileSystem.get(new Configuration());
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(1);
         }
         throw new RuntimeException();

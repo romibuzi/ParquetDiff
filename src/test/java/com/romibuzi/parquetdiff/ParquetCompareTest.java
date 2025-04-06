@@ -236,6 +236,6 @@ class ParquetCompareTest {
     }
 
     private ParquetDetails generateParquetDetails(ParquetSchemaNode schema) {
-        return new ParquetDetails(new Path("test_data.parquet"), 1, schema);
+        return new ParquetDetails(new Path("test_data.parquet/date=2025-04-20/part-000.parquet"), 1, schema);
     }
 }

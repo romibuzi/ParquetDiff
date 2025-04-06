@@ -4,6 +4,7 @@ import org.apache.hadoop.fs.Path;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record ParquetPartitions(List<ParquetPartition> partitions) {
     /**
@@ -34,5 +35,12 @@ public record ParquetPartitions(List<ParquetPartition> partitions) {
      */
     public List<String> values() {
         return partitions.stream().map(ParquetPartition::value).toList();
+    }
+
+    @Override
+    public String toString() {
+        return partitions.stream()
+                .map(ParquetPartition::toString)
+                .collect(Collectors.joining("/", "[", "]"));
     }
 }
