@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff;
+package com.romibuzi.parquetdiff.junit;
 
 import org.junit.jupiter.api.extension.*;
 

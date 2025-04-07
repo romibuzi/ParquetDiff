@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff;
+package com.romibuzi.parquetdiff.junit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
