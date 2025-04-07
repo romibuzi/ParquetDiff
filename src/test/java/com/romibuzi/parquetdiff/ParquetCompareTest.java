@@ -232,10 +232,8 @@ class ParquetCompareTest {
     }
 
     private ParquetSchemaDiff compareSchemas(ParquetSchemaNode firstSchema, ParquetSchemaNode secondSchema) {
-        return ParquetCompare.compareSchemas(generateParquetDetails(firstSchema), generateParquetDetails(secondSchema));
-    }
-
-    private ParquetDetails generateParquetDetails(ParquetSchemaNode schema) {
-        return new ParquetDetails(new Path("test_data.parquet/date=2025-04-20/part-000.parquet"), 1, schema);
+        return ParquetCompare.compareSchemas(
+                TestUtils.generateParquetDetails(firstSchema),
+                TestUtils.generateParquetDetails(secondSchema));
     }
 }
