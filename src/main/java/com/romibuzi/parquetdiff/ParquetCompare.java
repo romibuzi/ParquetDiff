@@ -87,11 +87,6 @@ public final class ParquetCompare {
                                             ParquetSchemaDiff diff) {
         String currentPath = buildSchemaPath(schemaPath, node1.name());
 
-        // TODO handle outside the traversal of nodes as it can only happen at the root level
-        if (!node1.name().equals(node2.name())) {
-            System.out.println("Name mismatch at " + currentPath + " (" + node1.name() + " vs " + node2.name() + ")");
-        }
-
         findSchemasNodesTypesDifference(node1, node2, currentPath, diff);
 
         Map<String, ParquetSchemaNode> children1 = node1.getChildrenMap();
@@ -120,16 +115,14 @@ public final class ParquetCompare {
                                                         ParquetSchemaNode node2,
                                                         String schemaPath,
                                                         ParquetSchemaDiff diff) {
-        if (!node1.type().equals(node2.type())) {
+        if (!node1.hasSameType(node2)) {
             diff.addTypeDiff(new ParquetSchemaTypeDiff(schemaPath, node1.type(), node2.type()));
             return;
         }
 
-        if (ParquetSchemaType.PRIMITIVE == node1.type()) {
-            if (!node1.primitiveTypeName().equals(node2.primitiveTypeName())) {
-                diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(schemaPath, node1.primitiveTypeName(),
-                        node2.primitiveTypeName()));
-            }
+        if (!node1.hasSamePrimitiveType(node2)) {
+            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(schemaPath, node1.primitiveTypeName(),
+                    node2.primitiveTypeName()));
         }
     }
 

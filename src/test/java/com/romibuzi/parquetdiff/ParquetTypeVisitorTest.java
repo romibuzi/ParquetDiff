@@ -23,7 +23,7 @@ class ParquetTypeVisitorTest {
                 """;
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, List.of(
                 new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32)
         ));
 
@@ -41,7 +41,7 @@ class ParquetTypeVisitorTest {
                 """;
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, List.of(
                 new ParquetSchemaNode("list_field", ParquetSchemaType.LIST, null, List.of(
                         new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE,
                                 PrimitiveType.PrimitiveTypeName.BINARY)
@@ -63,7 +63,7 @@ class ParquetTypeVisitorTest {
                 """;
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, List.of(
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, List.of(
                 new ParquetSchemaNode("map_field", ParquetSchemaType.MAP, null, List.of(
                         new ParquetSchemaNode("key", ParquetSchemaType.PRIMITIVE,
                                 PrimitiveType.PrimitiveTypeName.BINARY),
@@ -90,7 +90,7 @@ class ParquetTypeVisitorTest {
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(
-                "test_schema",
+                "root",
                 ParquetSchemaType.MESSAGE,
                 null,
                 List.of(
@@ -123,7 +123,7 @@ class ParquetTypeVisitorTest {
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(
-                "test_schema",
+                "root",
                 ParquetSchemaType.MESSAGE,
                 null,
                 List.of(
@@ -145,7 +145,7 @@ class ParquetTypeVisitorTest {
         String schemaInput = "message test_schema {}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null);
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null);
 
         assertEquals(expected, schema);
     }

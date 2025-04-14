@@ -18,7 +18,7 @@ public final class ParquetTypeVisitor implements TypeVisitor {
 
     @Override
     public void visit(MessageType messageType) {
-        root = new ParquetSchemaNode(messageType.getName(), ParquetSchemaType.MESSAGE, null);
+        root = new ParquetSchemaNode(ParquetSchemaType.MESSAGE.toString(), ParquetSchemaType.MESSAGE, null);
         enterNewParent(root);
         for (Type field : messageType.getFields()) {
             field.accept(this);

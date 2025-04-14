@@ -61,6 +61,25 @@ public record ParquetSchemaNode(String name,
     }
 
     /**
+     * @param other the other node.
+     * @return true if the other node has the same type as the current one.
+     */
+    public boolean hasSameType(ParquetSchemaNode other) {
+        return type.equals(other.type);
+    }
+
+    /**
+     * @param other the other node.
+     * @return true if the other node has the same primitive type as the current one.
+     */
+    public boolean hasSamePrimitiveType(ParquetSchemaNode other) {
+        if (ParquetSchemaType.PRIMITIVE != type) {
+            return true; // Don't run the comparison if node is not a primitive
+        }
+        return primitiveTypeName.equals(other.primitiveTypeName);
+    }
+
+    /**
      * Prints the Schema from the Root node in a tree format.
      */
     public void printSchema() {
@@ -74,10 +93,7 @@ public record ParquetSchemaNode(String name,
         String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
 
         String infos = switch (node.type()) {
-            case MESSAGE -> "root";
-            case GROUP -> "struct";
-            case LIST -> "list";
-            case MAP -> "map";
+            case MESSAGE, GROUP, LIST, MAP -> node.type().toString();
             case PRIMITIVE -> node.primitiveTypeName().name().toLowerCase(Locale.ROOT);
         };
 

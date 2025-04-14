@@ -119,8 +119,8 @@ class ParquetSchemaDiffTest {
         String[] lines = TestUtils.getLines(capturedOut);
         assertEquals(3, lines.length);
         assertTrue(lines[0].contains("Differences found"));
-        assertEquals("different field type for 'name': 'GROUP' instead of 'PRIMITIVE'.", lines[1]);
-        assertEquals("different field type for 'email': 'PRIMITIVE' instead of 'GROUP'.", lines[2]);
+        assertEquals("different field type for 'name': 'struct' instead of 'primitive'.", lines[1]);
+        assertEquals("different field type for 'email': 'primitive' instead of 'struct'.", lines[2]);
     }
 
     @Test
