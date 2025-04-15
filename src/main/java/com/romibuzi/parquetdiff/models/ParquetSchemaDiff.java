@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record ParquetSchemaDiff(ParquetDetails firstParquet,
-                                ParquetDetails secondParquet,
+public record ParquetSchemaDiff(ParquetDetails first,
+                                ParquetDetails second,
                                 List<String> additionalNodes,
                                 List<String> missingNodes,
                                 List<ParquetSchemaTypeDiff> typeDiffs,
                                 List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs) {
-    public ParquetSchemaDiff(ParquetDetails firstParquet, ParquetDetails secondParquet) {
-        this(firstParquet, secondParquet, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    public ParquetSchemaDiff(ParquetDetails first, ParquetDetails second) {
+        this(first, second, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public void addAdditionalNode(String nodePath) {
@@ -37,11 +37,10 @@ public record ParquetSchemaDiff(ParquetDetails firstParquet,
 
     public void printDifferences() {
         if (!hasDifferences()) {
-            System.out.println("No differences found in: " + secondParquet.partitions() + ".");
+            System.out.println("No differences found in " + second.partitions() + ".");
             return;
         }
-        System.out.println("Differences found in: " + secondParquet.partitions() + " compared to: "
-                + firstParquet.partitions() + ".");
+        System.out.println("Differences found in " + second.partitions() + ", compared to " + first.partitions() + ".");
         printAdditionalNodes();
         printMissingNodes();
         printTypeDiffs();

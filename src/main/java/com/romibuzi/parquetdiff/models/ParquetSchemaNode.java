@@ -82,9 +82,9 @@ public record ParquetSchemaNode(String name,
     /**
      * Prints the Schema from the Root node in a tree format.
      */
-    public void printSchema() {
+    public void print() {
         if (ParquetSchemaType.MESSAGE != type) {
-            throw new UnsupportedOperationException("printSchema() can only be applied to the Root node");
+            throw new UnsupportedOperationException("print() can only be applied to the Root node");
         }
         printNode(this, 0);
     }
@@ -93,7 +93,8 @@ public record ParquetSchemaNode(String name,
         String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
 
         String infos = switch (node.type()) {
-            case MESSAGE, GROUP, LIST, MAP -> node.type().toString();
+            case MESSAGE -> "";
+            case GROUP, LIST, MAP -> node.type().toString();
             case PRIMITIVE -> node.primitiveTypeName().name().toLowerCase(Locale.ROOT);
         };
 

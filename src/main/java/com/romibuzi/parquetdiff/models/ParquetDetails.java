@@ -6,4 +6,8 @@ public record ParquetDetails(Path path, long numRows, ParquetSchemaNode schema, 
     public ParquetDetails(Path path, long numRows, ParquetSchemaNode schema) {
         this(path, numRows, schema, ParquetPartitions.fromPath(path));
     }
+
+    public void printSchema() {
+        schema.print();
+    }
 }
