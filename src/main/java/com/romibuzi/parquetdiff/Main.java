@@ -13,53 +13,42 @@ import java.util.List;
 
 public final class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final String UNICODE_GREEN_CROSS = toUnicodeString(0x2705);
+    private static final String UNICODE_LARGE_YELLOW_SQUARE = toUnicodeString(0x1F7E8);
 
     private final ParquetReader parquetReader;
 
-    public Main(FileSystem fileSystem) {
-        parquetReader = new ParquetReader(fileSystem);
+    public Main(ParquetReader parquetReader) {
+        this.parquetReader = parquetReader;
     }
 
     /**
      * @param parquetDirectory the Parquet directory to analyze.
      */
-    public void run(String parquetDirectory) {
-        List<ParquetDetails> parquets = readParquetDirectory(parquetDirectory);
+    public void run(String parquetDirectory) throws IOException {
+        List<ParquetDetails> parquets = parquetReader.readParquetDirectory(parquetDirectory);
         LOGGER.info("Found {} parquets files", parquets.size());
 
-        List<ParquetPartitions> differentPartitionsStructure =
-                ParquetCompare.findDifferentPartitionsStructure(parquets);
-
-        if (differentPartitionsStructure.isEmpty()) {
-            System.out.println("All Parquet partitions have the same structure");
+        List<ParquetPartitions> partitionsDifferences = ParquetCompare.findDifferentPartitionsStructure(parquets);
+        if (partitionsDifferences.isEmpty()) {
+            System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same structure.");
         }
 
         List<ParquetSchemaDiff> schemasDifferences = ParquetCompare.findSchemasDifferences(parquets);
         if (schemasDifferences.isEmpty()) {
-            System.out.println("All Parquet partitions have the same schema");
+            System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same schema.");
         } else {
+            System.out.println(UNICODE_LARGE_YELLOW_SQUARE + " Parquet schemas differences found.");
             schemasDifferences.forEach(ParquetSchemaDiff::printDifferences);
         }
     }
 
-    private List<ParquetDetails> readParquetDirectory(String parquetDirectory) {
-        try {
-            return parquetReader.readParquetDirectory(parquetDirectory);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-        throw new RuntimeException();
+    private static FileSystem initFileSystem() throws IOException {
+        return FileSystem.get(new Configuration());
     }
 
-    private static FileSystem initFileSystem() {
-        try {
-            return FileSystem.get(new Configuration());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-        throw new RuntimeException();
+    private static String toUnicodeString(int code) {
+        return new String(Character.toChars(code));
     }
 
     /**
@@ -71,7 +60,13 @@ public final class Main {
             System.exit(1);
         }
 
-        Main main = new Main(initFileSystem());
-        main.run(args[0]);
+        try {
+            FileSystem fileSystem = initFileSystem();
+            Main main = new Main(new ParquetReader(fileSystem));
+            main.run(args[0]);
+        } catch (IOException e) {
+            LOGGER.error("Error occurred", e);
+            System.exit(1);
+        }
     }
 }

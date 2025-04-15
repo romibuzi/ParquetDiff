@@ -37,10 +37,11 @@ public record ParquetSchemaDiff(ParquetDetails firstParquet,
 
     public void printDifferences() {
         if (!hasDifferences()) {
-            System.out.println("No differences found in: " + secondParquet.partitions());
+            System.out.println("No differences found in: " + secondParquet.partitions() + ".");
             return;
         }
-        System.out.println("Differences found in: " + secondParquet.partitions());
+        System.out.println("Differences found in: " + secondParquet.partitions() + " compared to: "
+                + firstParquet.partitions() + ".");
         printAdditionalNodes();
         printMissingNodes();
         printTypeDiffs();
