@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public final class ParquetReader {
@@ -64,7 +66,9 @@ public final class ParquetReader {
 
     private FileStatus[] getFileStatuses(Path path) {
         try {
-            return fileSystem.listStatus(path);
+            FileStatus[] fileStatuses = fileSystem.listStatus(path);
+            Arrays.sort(fileStatuses, Comparator.comparing(FileStatus::getPath));
+            return fileStatuses;
         } catch (IOException e) {
             LOGGER.error("Could not listStatus on {}", path, e);
             return new FileStatus[]{};
