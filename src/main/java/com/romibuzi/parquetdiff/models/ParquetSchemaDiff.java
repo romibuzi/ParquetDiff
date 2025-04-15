@@ -48,21 +48,21 @@ public record ParquetSchemaDiff(ParquetDetails first,
     }
 
     private void printAdditionalNodes() {
-        additionalNodes.forEach(node -> System.out.printf("additional field: '%s'.%n", node));
+        additionalNodes.forEach(node -> System.out.printf("additional field: '%s'.%s", node, System.lineSeparator()));
     }
 
     private void printMissingNodes() {
-        missingNodes.forEach(node -> System.out.printf("missing field: '%s'.%n", node));
+        missingNodes.forEach(node -> System.out.printf("missing field: '%s'.%s", node, System.lineSeparator()));
     }
 
     private void printTypeDiffs() {
-        typeDiffs.forEach(typeDiff -> System.out.printf("different field type for '%s': '%s' instead of '%s'.%n",
-                typeDiff.nodePath(), typeDiff.newType(), typeDiff.oldType()));
+        typeDiffs.forEach(typeDiff -> System.out.printf("different field type for '%s': '%s' instead of '%s'.%s",
+                typeDiff.nodePath(), typeDiff.newType(), typeDiff.oldType(), System.lineSeparator()));
     }
 
     private void printPrimitiveTypeDiffs() {
         primitiveTypeDiffs.forEach(primitiveDiff -> System.out.printf("different field primitive type for '%s': '%s' "
-                        + "instead of '%s'.%n", primitiveDiff.nodePath(), primitiveDiff.newType(),
-                primitiveDiff.oldType()));
+                        + "instead of '%s'.%s", primitiveDiff.nodePath(), primitiveDiff.newType(),
+                primitiveDiff.oldType(), System.lineSeparator()));
     }
 }

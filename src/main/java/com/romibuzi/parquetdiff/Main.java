@@ -34,6 +34,7 @@ public final class Main {
         }
 
         LOGGER.info("Found {} partitions and {} parquets files", countNumberOfPartitions(parquets), parquets.size());
+        LOGGER.info("Total rows: {}", countNumberOfRows(parquets));
 
         List<ParquetPartitions> partitionsDifferences = ParquetCompare.findDifferentPartitionsStructure(parquets);
         if (partitionsDifferences.isEmpty()) {
@@ -45,7 +46,7 @@ public final class Main {
 
         List<ParquetSchemaDiff> schemasDifferences = ParquetCompare.findSchemasDifferences(parquets);
         if (schemasDifferences.isEmpty()) {
-            System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same schema:");
+            System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same schema.");
             parquets.get(0).printSchema();
         } else {
             System.out.println(UNICODE_LARGE_YELLOW_SQUARE + " Parquet schemas differences found.");
@@ -57,6 +58,10 @@ public final class Main {
 
     private long countNumberOfPartitions(List<ParquetDetails> parquets) {
         return parquets.stream().map(ParquetDetails::partitions).distinct().count();
+    }
+
+    private long countNumberOfRows(List<ParquetDetails> parquets) {
+        return parquets.stream().mapToLong(ParquetDetails::numRows).sum();
     }
 
     private static FileSystem initFileSystem() throws IOException {

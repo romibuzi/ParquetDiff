@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
  * does not yet handle associated logical types.
  * </p>
  *
- * @param name              The name of the schema node.
- * @param type              The type of the schema node
- * @param primitiveTypeName The primitive type name, applicable if the node is a primitive type.
- * @param children          The list of child nodes if the node is a group type.
+ * @param name          The name of the schema node.
+ * @param type          The type of the schema node
+ * @param primitiveType The primitive type name, applicable if the node is a primitive type.
+ * @param children      The list of child nodes if the node is a group type.
  */
 public record ParquetSchemaNode(String name,
                                 ParquetSchemaType type,
-                                PrimitiveType.PrimitiveTypeName primitiveTypeName,
+                                PrimitiveType.PrimitiveTypeName primitiveType,
                                 List<ParquetSchemaNode> children) {
     public ParquetSchemaNode(String name,
                              ParquetSchemaType type,
@@ -76,7 +76,7 @@ public record ParquetSchemaNode(String name,
         if (ParquetSchemaType.PRIMITIVE != type) {
             return true; // Don't run the comparison if node is not a primitive
         }
-        return primitiveTypeName.equals(other.primitiveTypeName);
+        return primitiveType.equals(other.primitiveType);
     }
 
     /**
@@ -95,7 +95,7 @@ public record ParquetSchemaNode(String name,
         String infos = switch (node.type()) {
             case MESSAGE -> "";
             case GROUP, LIST, MAP -> node.type().toString();
-            case PRIMITIVE -> node.primitiveTypeName().name().toLowerCase(Locale.ROOT);
+            case PRIMITIVE -> node.primitiveName();
         };
 
         System.out.println(prefix + node.name() + ": " + infos);
@@ -103,5 +103,12 @@ public record ParquetSchemaNode(String name,
         for (ParquetSchemaNode child : node.children()) {
             printNode(child, indent + 2);
         }
+    }
+
+    private String primitiveName() {
+        if (ParquetSchemaType.PRIMITIVE != type) {
+            throw new UnsupportedOperationException("primitiveName() can only be applied to a Primitive node");
+        }
+        return primitiveType.name().toLowerCase(Locale.ROOT);
     }
 }

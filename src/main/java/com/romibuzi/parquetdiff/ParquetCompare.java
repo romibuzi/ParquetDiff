@@ -121,8 +121,8 @@ public final class ParquetCompare {
         }
 
         if (!node1.hasSamePrimitiveType(node2)) {
-            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(schemaPath, node1.primitiveTypeName(),
-                    node2.primitiveTypeName()));
+            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(schemaPath, node1.primitiveType(),
+                    node2.primitiveType()));
         }
     }
 

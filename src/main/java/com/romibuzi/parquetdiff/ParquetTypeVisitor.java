@@ -55,9 +55,7 @@ public final class ParquetTypeVisitor implements TypeVisitor {
         LogicalTypeAnnotation logicalType = groupType.getLogicalTypeAnnotation();
         if (logicalType == null) {
             return ParquetSchemaType.GROUP;
-        }
-
-        if (logicalType == LogicalTypeAnnotation.listType()) {
+        } else if (logicalType == LogicalTypeAnnotation.listType()) {
             return ParquetSchemaType.LIST;
         } else if (logicalType == LogicalTypeAnnotation.mapType()) {
             return ParquetSchemaType.MAP;
