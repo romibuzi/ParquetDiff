@@ -1,5 +1,7 @@
 package com.romibuzi.parquetdiff.models;
 
+import java.util.Locale;
+
 public enum ParquetSchemaType {
     /**
      * Root element of a Parquet schema.
@@ -25,29 +27,19 @@ public enum ParquetSchemaType {
     /**
      * Specific GROUP type that represents a list of elements of the same type.
      */
-    LIST {
-        @Override
-        public String toString() {
-            return "list";
-        }
-    },
+    LIST,
     /**
      * Specific GROUP type that represents a map of key value elements.
      */
-    MAP {
-        @Override
-        public String toString() {
-            return "map";
-        }
-    },
+    MAP,
     /**
      * Primitive field in the schema.
      * PRIMITIVE fields do not have child elements.
      */
-    PRIMITIVE {
-        @Override
-        public String toString() {
-            return "primitive";
-        }
-    };
+    PRIMITIVE;
+
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase(Locale.ROOT);
+    }
 }
