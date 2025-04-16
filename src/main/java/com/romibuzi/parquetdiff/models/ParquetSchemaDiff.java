@@ -40,7 +40,7 @@ public record ParquetSchemaDiff(ParquetDetails first,
             System.out.println("No differences found in " + second.partitions() + ".");
             return;
         }
-        System.out.println("Differences found in " + second.partitions() + ", compared to " + first.partitions() + ".");
+        System.out.println("Differences found in " + second.partitions() + ", compared to " + first.partitions() + ":");
         printAdditionalNodes();
         printMissingNodes();
         printTypeDiffs();
