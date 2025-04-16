@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.diff;
 
 import org.apache.parquet.schema.PrimitiveType;
 

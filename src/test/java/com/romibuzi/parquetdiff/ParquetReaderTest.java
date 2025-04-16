@@ -1,6 +1,6 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;

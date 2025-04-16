@@ -1,6 +1,10 @@
-package com.romibuzi.parquetdiff;
+package com.romibuzi.parquetdiff.diff;
 
-import com.romibuzi.parquetdiff.models.*;
+import com.romibuzi.parquetdiff.TestUtils;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetPartitions;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.schema.LogicalTypeAnnotation;
 import org.apache.parquet.schema.PrimitiveType;
@@ -11,10 +15,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ParquetCompareTest {
+class ParquetComparatorTest {
     @Test
     void findDifferentPartitionsStructureEmpty() {
-        List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(Collections.emptyList());
+        List<ParquetPartitions> results = ParquetComparator.findDifferentPartitionsStructure(Collections.emptyList());
         assertTrue(results.isEmpty());
     }
 
@@ -22,7 +26,7 @@ class ParquetCompareTest {
     void findDifferentPartitionsStructureSinglePartition() {
         String path = "vaccinations.parquet/date=2020-12-28/country=Spain/part-0000.parquet";
         ParquetDetails first = new ParquetDetails(new Path(path), 10, null);
-        List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first));
+        List<ParquetPartitions> results = ParquetComparator.findDifferentPartitionsStructure(List.of(first));
         assertTrue(results.isEmpty());
     }
 
@@ -32,7 +36,7 @@ class ParquetCompareTest {
         String secondPath = "vaccinations.parquet/date=2020-12-29/country=Spain/part-0000.parquet";
         ParquetDetails first = new ParquetDetails(new Path(firstPath), 10, null);
         ParquetDetails second = new ParquetDetails(new Path(secondPath), 10, null);
-        List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first, second));
+        List<ParquetPartitions> results = ParquetComparator.findDifferentPartitionsStructure(List.of(first, second));
         assertTrue(results.isEmpty());
     }
 
@@ -42,7 +46,7 @@ class ParquetCompareTest {
         String secondPath = "vaccinations.parquet/date=2020-12-29/part-0000.parquet";
         ParquetDetails first = new ParquetDetails(new Path(firstPath), 10, null);
         ParquetDetails second = new ParquetDetails(new Path(secondPath), 10, null);
-        List<ParquetPartitions> results = ParquetCompare.findDifferentPartitionsStructure(List.of(first, second));
+        List<ParquetPartitions> results = ParquetComparator.findDifferentPartitionsStructure(List.of(first, second));
         assertEquals(2, results.size());
         assertEquals(List.of("date", "country"), results.get(0).keys());
         assertEquals(List.of("date"), results.get(1).keys());
@@ -233,7 +237,7 @@ class ParquetCompareTest {
     }
 
     private ParquetSchemaDiff compareSchemas(ParquetSchemaNode firstSchema, ParquetSchemaNode secondSchema) {
-        return ParquetCompare.compareSchemas(
+        return ParquetComparator.compareSchemas(
                 TestUtils.generateParquetDetails(firstSchema),
                 TestUtils.generateParquetDetails(secondSchema));
     }

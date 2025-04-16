@@ -1,7 +1,7 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetDetails;
-import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import org.apache.hadoop.fs.Path;
 
 import java.util.function.Supplier;

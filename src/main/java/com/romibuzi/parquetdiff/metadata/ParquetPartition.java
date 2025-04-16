@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.metadata;
 
 public record ParquetPartition(String key, String value) {
     /**
@@ -7,7 +7,7 @@ public record ParquetPartition(String key, String value) {
      * @param partition The input partition.
      * @return A {@link ParquetPartition} instance.
      */
-    public static ParquetPartition fromString(String partition) {
+    static ParquetPartition fromString(String partition) {
         String[] splits = partition.split("=", 2);
         return new ParquetPartition(splits[0], splits[1]);
     }

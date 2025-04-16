@@ -1,11 +1,13 @@
-package com.romibuzi.parquetdiff;
+package com.romibuzi.parquetdiff.diff;
 
-import com.romibuzi.parquetdiff.models.*;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetPartitions;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 
 import java.util.*;
 
-public final class ParquetCompare {
-    private ParquetCompare() {
+public final class ParquetComparator {
+    private ParquetComparator() {
     }
 
     /**

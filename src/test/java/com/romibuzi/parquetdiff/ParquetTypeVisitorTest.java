@@ -1,7 +1,7 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
-import com.romibuzi.parquetdiff.models.ParquetSchemaType;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.parquet.schema.LogicalTypeAnnotation;
 import org.apache.parquet.schema.MessageType;
 import org.apache.parquet.schema.MessageTypeParser;

@@ -1,8 +1,10 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.diff;
 
 import com.romibuzi.parquetdiff.TestUtils;
 import com.romibuzi.parquetdiff.junit.CaptureSystemOut;
 import com.romibuzi.parquetdiff.junit.CapturedSystemOut;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.parquet.schema.PrimitiveType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

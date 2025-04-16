@@ -1,7 +1,7 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetSchemaNode;
-import com.romibuzi.parquetdiff.models.ParquetSchemaType;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.parquet.schema.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

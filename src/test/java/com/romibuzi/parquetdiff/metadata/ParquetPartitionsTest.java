@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.metadata;
 
 import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.Test;

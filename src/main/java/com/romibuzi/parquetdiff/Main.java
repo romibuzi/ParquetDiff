@@ -1,8 +1,9 @@
 package com.romibuzi.parquetdiff;
 
-import com.romibuzi.parquetdiff.models.ParquetDetails;
-import com.romibuzi.parquetdiff.models.ParquetPartitions;
-import com.romibuzi.parquetdiff.models.ParquetSchemaDiff;
+import com.romibuzi.parquetdiff.diff.ParquetComparator;
+import com.romibuzi.parquetdiff.diff.ParquetSchemaDiff;
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
+import com.romibuzi.parquetdiff.metadata.ParquetPartitions;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public final class Main {
         LOGGER.info("Found {} partitions and {} parquets files", countNumberOfPartitions(parquets), parquets.size());
         LOGGER.info("Total rows: {}", countNumberOfRows(parquets));
 
-        List<ParquetPartitions> partitionsDifferences = ParquetCompare.findDifferentPartitionsStructure(parquets);
+        List<ParquetPartitions> partitionsDifferences = ParquetComparator.findDifferentPartitionsStructure(parquets);
         if (partitionsDifferences.isEmpty()) {
             System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same structure.");
         } else {
@@ -44,7 +45,7 @@ public final class Main {
             partitionsDifferences.forEach(System.out::println);
         }
 
-        List<ParquetSchemaDiff> schemasDifferences = ParquetCompare.findSchemasDifferences(parquets);
+        List<ParquetSchemaDiff> schemasDifferences = ParquetComparator.findSchemasDifferences(parquets);
         if (schemasDifferences.isEmpty()) {
             System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same schema.");
             parquets.get(0).printSchema();

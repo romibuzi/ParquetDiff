@@ -1,4 +1,6 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.diff;
+
+import com.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 
 /**
  * Represents a Type difference. e.g. PRIMITIVE vs GROUP.

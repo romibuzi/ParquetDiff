@@ -1,4 +1,4 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.metadata;
 
 import org.apache.hadoop.fs.Path;
 
@@ -13,7 +13,7 @@ public record ParquetPartitions(List<ParquetPartition> partitions) {
      * @param path The full path to a Parquet file.
      * @return A {@link ParquetPartitions} instance with extracted partitions.
      */
-    public static ParquetPartitions fromPath(Path path) {
+    static ParquetPartitions fromPath(Path path) {
         List<ParquetPartition> partitions =
                 Arrays.stream(path.toUri().getPath().split("/"))
                         .filter(part -> part.contains("="))

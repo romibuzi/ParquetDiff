@@ -1,4 +1,6 @@
-package com.romibuzi.parquetdiff.models;
+package com.romibuzi.parquetdiff.diff;
+
+import com.romibuzi.parquetdiff.metadata.ParquetDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +22,8 @@ public record ParquetSchemaDiff(ParquetDetails first,
                                 List<String> missingNodes,
                                 List<ParquetSchemaTypeDiff> typeDiffs,
                                 List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs) {
-    public ParquetSchemaDiff(ParquetDetails first, ParquetDetails second) {
+    ParquetSchemaDiff(ParquetDetails first, ParquetDetails second) {
         this(first, second, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    }
-
-    public void addAdditionalNode(String nodePath) {
-        additionalNodes.add(nodePath);
-    }
-
-    public void addMissingNode(String nodePath) {
-        missingNodes.add(nodePath);
-    }
-
-    public void addTypeDiff(ParquetSchemaTypeDiff typeDiff) {
-        typeDiffs.add(typeDiff);
-    }
-
-    public void addPrimitiveTypeDiff(ParquetSchemaPrimitiveTypeDiff primitiveTypeDiff) {
-        primitiveTypeDiffs.add(primitiveTypeDiff);
     }
 
     /**
@@ -63,6 +49,22 @@ public record ParquetSchemaDiff(ParquetDetails first,
         printMissingNodes();
         printTypeDiffs();
         printPrimitiveTypeDiffs();
+    }
+
+    void addAdditionalNode(String nodePath) {
+        additionalNodes.add(nodePath);
+    }
+
+    void addMissingNode(String nodePath) {
+        missingNodes.add(nodePath);
+    }
+
+    void addTypeDiff(ParquetSchemaTypeDiff typeDiff) {
+        typeDiffs.add(typeDiff);
+    }
+
+    void addPrimitiveTypeDiff(ParquetSchemaPrimitiveTypeDiff primitiveTypeDiff) {
+        primitiveTypeDiffs.add(primitiveTypeDiff);
     }
 
     private void printAdditionalNodes() {
