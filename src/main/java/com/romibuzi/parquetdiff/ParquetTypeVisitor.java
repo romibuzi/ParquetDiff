@@ -11,7 +11,7 @@ import java.util.Stack;
 /**
  * A TypeVisitor implementation to extract a given {@link MessageType} into a {@link ParquetSchemaNode}.
  */
-public final class ParquetTypeVisitor implements TypeVisitor {
+final class ParquetTypeVisitor implements TypeVisitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParquetTypeVisitor.class);
     private ParquetSchemaNode root;
     private final Stack<ParquetSchemaNode> nodeStack = new Stack<>();
