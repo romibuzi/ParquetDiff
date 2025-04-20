@@ -6,7 +6,7 @@
 
     <groupId>io.github.romibuzi</groupId>
     <artifactId>ParquetDiff</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -30,10 +30,14 @@
 
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
+        <flatten-plugin.version>1.7.0</flatten-plugin.version>
+
         <source-plugin.version>3.3.0</source-plugin.version>
         <javadoc-plugin.version>3.6.3</javadoc-plugin.version>
         <gpg-plugin.version>3.2.7</gpg-plugin.version>
         <central-publishing-plugin.version>0.7.0</central-publishing-plugin.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
+
         <shade-plugin.version>3.5.0</shade-plugin.version>
     </properties>
 
@@ -83,7 +87,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -133,6 +136,29 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-plugin.version}</version>
+                <configuration>
+                    <flattenMode>oss</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
