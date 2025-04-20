@@ -5,17 +5,18 @@ Find schema differences in a partitioned Parquet directory.
 
 #### ✨ Features
 
-- 📦 **Framework-free**: No need for frameworks like Apache Spark — uses only the plain Parquet Java library.
+- 📦 **Lightweight**: Uses only Parquet and Hadoop common Java libraries.
 - 🧠 **Schema diffing**: Detects differences in Parquet individual files schemas, including nested structures.
 - ⚡  **Metadata-only parsing**: Reads only Parquet footer metadata — no data is loaded.
-- 🛠️ **Lightweight & fast**: Focused on schema comparison, making it ideal for quick validations or CI checks.
+- 🛠️ **Embeddable**: Use CLI tool or as a library, making it ideal for validations and CI
+  checks.
 
-#### 🚀 Usage
+### 🚀 CLI Usage
 
 ```
-java -jar ParquetDiff.jar /path/to/data.parquet # local
+java -jar cli/target/parquetdiff.jar /path/to/data.parquet # local
 
-java -jar ParquetDiff.jar hdfs:///path/to/data.parquet # hdfs
+java -jar cli/target/parquetdiff.jar hdfs:///path/to/data.parquet # hdfs
 ```
 
 #### 🧾 Example
@@ -40,12 +41,50 @@ Differences found in [date=2022-05-29], compared to [date=2022-05-28]:
 additional field: 'root.people_vaccinated'.
 ```
 
-#### ☕ Requirements
+### 📚 Library Usage
+
+add dependency with maven:
+
+```
+<dependency>
+    <groupId>io.github.romibuzi</groupId>
+    <artifactId>parquetdiff</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+or gradle: `implementation("io.github.romibuzi:parquetdiff:1.0.0")`
+
+usage:
+
+```java
+import io.github.romibuzi.parquetdiff.ParquetReader;
+import io.github.romibuzi.parquetdiff.diff.ParquetComparator;
+import io.github.romibuzi.parquetdiff.diff.ParquetSchemaDiff;
+import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+
+import java.io.IOException;
+
+class Usage {
+  public static void main(String[] args) throws IOException {
+    ParquetReader reader = new ParquetReader(FileSystem.get(new Configuration()));
+    List<ParquetDetails> parquets = reader.readParquetDirectory("my_data.parquet");
+    List<ParquetSchemaDiff> differences = ParquetComparator.findSchemasDifferences(parquets);
+    for (ParquetSchemaDiff difference : differences) {
+      difference.printDifferences(System.out);
+    }
+  }
+}
+```
+
+### ☕ Requirements
 
 - Java **17 or higher**
 - Maven
 
-#### 🔧 Build from source
+### 🔧 Build from source
 
 ```
 git clone https://github.com/romibuzi/ParquetDiff.git
@@ -55,8 +94,8 @@ mvn package
 
 Then run:
 
-`java -jar target/ParquetDiff.jar /path/to/data.parquet`
+`java -jar cli/target/parquetdiff.jar /path/to/data.parquet`
 
-## License
+### License
 
 Licensed under the MIT license. See [LICENSE](LICENSE) for the full details.

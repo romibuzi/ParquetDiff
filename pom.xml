@@ -4,9 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.romibuzi</groupId>
+    <groupId>io.github.romibuzi</groupId>
     <artifactId>ParquetDiff</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>library</module>
+        <module>cli</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -24,37 +30,70 @@
 
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
+        <source-plugin.version>3.3.0</source-plugin.version>
+        <javadoc-plugin.version>3.6.3</javadoc-plugin.version>
+        <gpg-plugin.version>3.2.7</gpg-plugin.version>
+        <central-publishing-plugin.version>0.7.0</central-publishing-plugin.version>
+        <shade-plugin.version>3.5.0</shade-plugin.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.parquet</groupId>
-            <artifactId>parquet-hadoop</artifactId>
-            <version>${parquet.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-core</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.parquet</groupId>
+                <artifactId>parquet-hadoop</artifactId>
+                <version>${parquet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${hadoop.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-reload4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-mapreduce-client-core</artifactId>
+                <version>${hadoop.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-reload4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-        <!-- logging -->
+    <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -90,7 +129,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configLocation>${project.basedir}/checkstyle.xml</configLocation>
+                    <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                 </configuration>
