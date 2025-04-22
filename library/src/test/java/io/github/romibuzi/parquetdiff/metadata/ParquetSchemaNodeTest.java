@@ -16,7 +16,7 @@ class ParquetSchemaNodeTest {
         node.addChild(child);
 
         assertTrue(node.hasChildren());
-        assertEquals(child, node.children().get(0));
+        assertEquals(child, node.getChildren().get(0));
         assertFalse(child.hasChildren());
     }
 

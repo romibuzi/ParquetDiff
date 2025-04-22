@@ -45,8 +45,8 @@ class ParquetComparatorTest {
         ParquetDetails second = new ParquetDetails(new Path(secondPath), 10, null);
         List<ParquetPartitions> results = ParquetComparator.findDifferentPartitionsStructure(List.of(first, second));
         assertEquals(2, results.size());
-        assertEquals(List.of("date", "country"), results.get(0).keys());
-        assertEquals(List.of("date"), results.get(1).keys());
+        assertEquals(List.of("date", "country"), results.get(0).getKeys());
+        assertEquals(List.of("date"), results.get(1).getKeys());
     }
 
     @Test
@@ -88,7 +88,7 @@ class ParquetComparatorTest {
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.additionalNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.getAdditionalNodes());
     }
 
     @Test
@@ -105,7 +105,7 @@ class ParquetComparatorTest {
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.missingNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.getMissingNodes());
     }
 
     @Test
@@ -123,7 +123,7 @@ class ParquetComparatorTest {
         assertTrue(result.hasDifferences());
         assertEquals(List.of(new ParquetSchemaTypeDiff(new ParquetSchemaNodePath("test_schema", "id"),
                 ParquetSchemaType.GROUP,
-                ParquetSchemaType.PRIMITIVE)), result.typeDiffs());
+                ParquetSchemaType.PRIMITIVE)), result.getTypeDiffs());
     }
 
     @Test
@@ -142,7 +142,7 @@ class ParquetComparatorTest {
         assertTrue(result.hasDifferences());
         assertEquals(List.of(new ParquetSchemaPrimitiveTypeDiff(new ParquetSchemaNodePath("test_schema", "id"),
                         PrimitiveType.PrimitiveTypeName.INT32, PrimitiveType.PrimitiveTypeName.INT64)),
-                result.primitiveTypeDiffs());
+                result.getPrimitiveTypeDiffs());
     }
 
     @Test
@@ -161,8 +161,8 @@ class ParquetComparatorTest {
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.missingNodes());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "email")), result.additionalNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "name")), result.getMissingNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "email")), result.getAdditionalNodes());
     }
 
     @Test
@@ -186,8 +186,9 @@ class ParquetComparatorTest {
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "address", "zip_code")), result.missingNodes());
-        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "address", "city")), result.additionalNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "address", "zip_code")),
+                result.getMissingNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("test_schema", "address", "city")), result.getAdditionalNodes());
     }
 
     @Test
@@ -203,9 +204,9 @@ class ParquetComparatorTest {
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
-        assertEquals(List.of(new ParquetSchemaNodePath("root", "4", "3", "2", "1", "id")), result.missingNodes());
+        assertEquals(List.of(new ParquetSchemaNodePath("root", "4", "3", "2", "1", "id")), result.getMissingNodes());
         assertEquals(List.of(new ParquetSchemaNodePath("root", "4", "3", "2", "1", "name")),
-                result.additionalNodes());
+                result.getAdditionalNodes());
     }
 
     @Test
@@ -225,7 +226,7 @@ class ParquetComparatorTest {
                         new ParquetSchemaNodePath("root", "4", "3", "2", "1", "id"),
                         PrimitiveType.PrimitiveTypeName.INT32,
                         PrimitiveType.PrimitiveTypeName.INT64)),
-                result.primitiveTypeDiffs());
+                result.getPrimitiveTypeDiffs());
     }
 
     private ParquetSchemaNode createNestedSchema(String baseName, ParquetSchemaNode finalPrimitiveNode, int depth) {

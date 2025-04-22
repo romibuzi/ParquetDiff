@@ -30,10 +30,10 @@ class ParquetSchemaDiffTest {
     @Test
     void hasNoDifferences() {
         assertFalse(diff.hasDifferences());
-        assertTrue(diff.additionalNodes().isEmpty());
-        assertTrue(diff.missingNodes().isEmpty());
-        assertTrue(diff.typeDiffs().isEmpty());
-        assertTrue(diff.primitiveTypeDiffs().isEmpty());
+        assertTrue(diff.getAdditionalNodes().isEmpty());
+        assertTrue(diff.getMissingNodes().isEmpty());
+        assertTrue(diff.getTypeDiffs().isEmpty());
+        assertTrue(diff.getPrimitiveTypeDiffs().isEmpty());
     }
 
     @Test
@@ -42,7 +42,7 @@ class ParquetSchemaDiffTest {
         diff.addAdditionalNode(new ParquetSchemaNodePath("email"));
         assertTrue(diff.hasDifferences());
         assertEquals(List.of(new ParquetSchemaNodePath("name"), new ParquetSchemaNodePath("email")),
-                diff.additionalNodes());
+                diff.getAdditionalNodes());
     }
 
     @Test
@@ -51,7 +51,7 @@ class ParquetSchemaDiffTest {
         diff.addMissingNode(new ParquetSchemaNodePath("email"));
         assertTrue(diff.hasDifferences());
         assertEquals(List.of(new ParquetSchemaNodePath("name"), new ParquetSchemaNodePath("email")),
-                diff.missingNodes());
+                diff.getMissingNodes());
     }
 
     @Test
@@ -65,7 +65,7 @@ class ParquetSchemaDiffTest {
         diff.addTypeDiff(first);
         diff.addTypeDiff(second);
         assertTrue(diff.hasDifferences());
-        assertEquals(List.of(first, second), diff.typeDiffs());
+        assertEquals(List.of(first, second), diff.getTypeDiffs());
     }
 
     @Test
@@ -77,7 +77,7 @@ class ParquetSchemaDiffTest {
         diff.addPrimitiveTypeDiff(first);
         diff.addPrimitiveTypeDiff(second);
         assertTrue(diff.hasDifferences());
-        assertEquals(List.of(first, second), diff.primitiveTypeDiffs());
+        assertEquals(List.of(first, second), diff.getPrimitiveTypeDiffs());
     }
 
     @Test

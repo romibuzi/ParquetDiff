@@ -17,11 +17,7 @@ class ParquetTypeVisitorTest {
 
     @Test
     void visitSchemaSingleField() {
-        String schemaInput = """
-                message test_schema {
-                    required int32 id;
-                }
-                """;
+        String schemaInput = "message test_schema { required int32 id; }";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
@@ -33,13 +29,11 @@ class ParquetTypeVisitorTest {
 
     @Test
     void visitSchemaWithListField() {
-        String schemaInput = """
-                message test_schema {
-                    repeated group list_field (LIST) {
-                        required binary value (STRING);
-                    }
-                }
-                """;
+        String schemaInput = "message test_schema {\n" +
+                "   repeated group list_field (LIST) {\n" +
+                "       required binary value (STRING);\n" +
+                "   }\n" +
+                "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
@@ -54,14 +48,12 @@ class ParquetTypeVisitorTest {
 
     @Test
     void visitSchemaWithMapField() {
-        String schemaInput = """
-                message test_schema {
-                    repeated group map_field (MAP) {
-                        required binary key (STRING);
-                        optional int32 value;
-                    }
-                }
-                """;
+        String schemaInput = "message test_schema {\n" +
+                "   repeated group map_field (MAP) {\n" +
+                "       required binary key (STRING);\n" +
+                "       optional int32 value;\n" +
+                "   }\n" +
+                "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
@@ -78,16 +70,14 @@ class ParquetTypeVisitorTest {
 
     @Test
     void visitSchema() {
-        String schemaInput = """
-                message test_schema {
-                    required int32 id;
-                    required group address {
-                        required binary street (UTF8);
-                        required int64 zip_code;
-                    }
-                    optional binary name (UTF8);
-                }
-                """;
+        String schemaInput = "message test_schema {\n" +
+                "    required int32 id;\n" +
+                "    required group address {\n" +
+                "        required binary street (UTF8);\n" +
+                "        required int64 zip_code;\n" +
+                "    }\n" +
+                "    optional binary name (UTF8);\n" +
+                "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(
@@ -113,16 +103,14 @@ class ParquetTypeVisitorTest {
 
     @Test
     void visitNestedSchema() {
-        String schemaInput = """
-                message test_schema {
-                    required group address {
-                        required binary street (UTF8);
-                        required group tenant {
-                          required binary name (UTF8);
-                        }
-                    }
-                }
-                """;
+        String schemaInput = "message test_schema {\n" +
+                "    required group address {\n" +
+                "        required binary street (UTF8);\n" +
+                "        required group tenant {\n" +
+                "          required binary name (UTF8);\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
         ParquetSchemaNode expected = new ParquetSchemaNode(

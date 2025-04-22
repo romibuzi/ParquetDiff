@@ -81,7 +81,7 @@ class Usage {
 
 ### ☕ Requirements
 
-- Java **17 or higher**
+- Java **11 or higher**
 - Maven
 
 ### 🔧 Build from source

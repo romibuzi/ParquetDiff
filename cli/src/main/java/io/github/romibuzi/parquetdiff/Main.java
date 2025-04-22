@@ -48,21 +48,21 @@ public final class Main {
         List<ParquetSchemaDiff> schemasDifferences = ParquetComparator.findSchemasDifferences(parquets);
         if (schemasDifferences.isEmpty()) {
             System.out.println(UNICODE_GREEN_CROSS + " All Parquet partitions have the same schema.");
-            parquets.get(0).printSchema();
+            parquets.get(0).printSchema(System.out);
         } else {
             System.out.println(UNICODE_LARGE_YELLOW_SQUARE + " Parquet schemas differences found.");
             System.out.println("Reference schema:");
-            parquets.get(0).printSchema();
+            parquets.get(0).printSchema(System.out);
             schemasDifferences.forEach(diff -> diff.printDifferences(System.out));
         }
     }
 
     private long countNumberOfPartitions(List<ParquetDetails> parquets) {
-        return parquets.stream().map(ParquetDetails::partitions).distinct().count();
+        return parquets.stream().map(ParquetDetails::getPartitions).distinct().count();
     }
 
     private long countNumberOfRows(List<ParquetDetails> parquets) {
-        return parquets.stream().mapToLong(ParquetDetails::numRows).sum();
+        return parquets.stream().mapToLong(ParquetDetails::getNumRows).sum();
     }
 
     private static FileSystem initFileSystem() throws IOException {

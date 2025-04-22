@@ -1,22 +1,24 @@
 package io.github.romibuzi.parquetdiff.metadata;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a path to the given node in a schema.
- *
- * @param components components of the path.
  */
-public record ParquetSchemaNodePath(List<String> components) {
+public final class ParquetSchemaNodePath {
+    private final List<String> components;
+
+    public ParquetSchemaNodePath(List<String> components) {
+        this.components = components;
+    }
+
     public ParquetSchemaNodePath() {
         this(Collections.emptyList());
     }
 
     public ParquetSchemaNodePath(String... segments) {
-        this(Arrays.stream(segments).toList());
+        this(Arrays.stream(segments).collect(Collectors.toList()));
     }
 
     /**
@@ -32,6 +34,13 @@ public record ParquetSchemaNodePath(List<String> components) {
     }
 
     /**
+     * @return components of the path.
+     */
+    public List<String> getComponents() {
+        return components;
+    }
+
+    /**
      * @param delimiter The delimiter to use between components.
      * @return The string representation of the path.
      */
@@ -42,5 +51,19 @@ public record ParquetSchemaNodePath(List<String> components) {
     @Override
     public String toString() {
         return toPathString(".");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParquetSchemaNodePath that = (ParquetSchemaNodePath) o;
+        return Objects.equals(components, that.components);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(components);
     }
 }

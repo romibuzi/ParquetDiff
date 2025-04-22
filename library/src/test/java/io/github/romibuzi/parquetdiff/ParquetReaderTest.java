@@ -30,12 +30,12 @@ class ParquetReaderTest {
         assertEquals(2, results.size());
 
         ParquetDetails firstParquet = results.get(0);
-        assertEquals(parquetPartitionPath(parquetDirectory, "date=2020-12-27"), firstParquet.path());
-        assertEquals(1, firstParquet.numRows());
+        assertEquals(parquetPartitionPath(parquetDirectory, "date=2020-12-27"), firstParquet.getPath());
+        assertEquals(1, firstParquet.getNumRows());
 
         ParquetDetails secondParquet = results.get(1);
-        assertEquals(parquetPartitionPath(parquetDirectory, "date=2020-12-28"), secondParquet.path());
-        assertEquals(1, secondParquet.numRows());
+        assertEquals(parquetPartitionPath(parquetDirectory, "date=2020-12-28"), secondParquet.getPath());
+        assertEquals(1, secondParquet.getNumRows());
     }
 
     @Test

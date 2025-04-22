@@ -6,6 +6,7 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Provide facilities to compare Parquet Schemas.
@@ -23,7 +24,8 @@ public final class ParquetComparator {
      * If differences are found, the first element in the list is the reference partition.
      */
     public static List<ParquetPartitions> findDifferentPartitionsStructure(List<ParquetDetails> parquets) {
-        List<ParquetPartitions> partitions = parquets.stream().map(ParquetDetails::partitions).toList();
+        List<ParquetPartitions> partitions =
+                parquets.stream().map(ParquetDetails::getPartitions).collect(Collectors.toList());
         if (partitions.isEmpty()) {
             return Collections.emptyList();
         }
@@ -34,7 +36,7 @@ public final class ParquetComparator {
         ParquetPartitions reference = iterator.next();
 
         iterator.forEachRemaining(partition -> {
-            if (!reference.keys().equals(partition.keys())) {
+            if (!reference.getKeys().equals(partition.getKeys())) {
                 results.add(partition);
             }
         });
@@ -94,7 +96,7 @@ public final class ParquetComparator {
      */
     static ParquetSchemaDiff compareSchemas(ParquetDetails firstParquet, ParquetDetails secondParquet) {
         ParquetSchemaDiff diff = new ParquetSchemaDiff(firstParquet, secondParquet);
-        compareSchemasNodes(firstParquet.schema(), secondParquet.schema(), null, diff);
+        compareSchemasNodes(firstParquet.getSchema(), secondParquet.getSchema(), null, diff);
         return diff;
     }
 
@@ -103,8 +105,8 @@ public final class ParquetComparator {
                                             ParquetSchemaNodePath path,
                                             ParquetSchemaDiff diff) {
         ParquetSchemaNodePath currentPath = path == null
-                ? new ParquetSchemaNodePath(node1.name())
-                : path.addComponent(node1.name());
+                ? new ParquetSchemaNodePath(node1.getName())
+                : path.addComponent(node1.getName());
 
         findSchemasNodesTypesDifference(node1, node2, currentPath, diff);
 
@@ -135,13 +137,13 @@ public final class ParquetComparator {
                                                         ParquetSchemaNodePath path,
                                                         ParquetSchemaDiff diff) {
         if (!node1.hasSameType(node2)) {
-            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.type(), node2.type()));
+            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.getType(), node2.getType()));
             return;
         }
 
         if (!node1.hasSamePrimitiveType(node2)) {
-            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(path, node1.primitiveType(),
-                    node2.primitiveType()));
+            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(path, node1.getPrimitiveType(),
+                    node2.getPrimitiveType()));
         }
     }
 }
