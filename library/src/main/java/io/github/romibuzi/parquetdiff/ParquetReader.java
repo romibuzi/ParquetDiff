@@ -30,6 +30,15 @@ public final class ParquetReader {
     private final ParquetTypeVisitor typeVisitor = new ParquetTypeVisitor();
 
     /**
+     * <p>
+     * Instantiate a ParquetReader instance with the given Hadoop filesystem. Example:
+     * <pre>{@code
+     * import org.apache.hadoop.conf.Configuration;
+     * import org.apache.hadoop.fs.FileSystem;
+     *
+     * ParquetReader reader = new ParquetReader(FileSystem.get(new Configuration));
+     * }</pre>
+     *
      * @param fileSystem A configured Hadoop filesystem.
      */
     public ParquetReader(FileSystem fileSystem) {
@@ -112,11 +121,8 @@ public final class ParquetReader {
         try {
             HadoopInputFile inputFile = HadoopInputFile.fromStatus(fileStatus, fileSystem.getConf());
             try (ParquetFileReader metadata = ParquetFileReader.open(inputFile, PARQUET_READ_OPTIONS)) {
-                return new ParquetDetails(
-                        fileStatus.getPath(),
-                        metadata.getRecordCount(),
-                        extractSchema(metadata.getFileMetaData().getSchema())
-                );
+                return new ParquetDetails(fileStatus.getPath(), metadata.getRecordCount(),
+                        extractSchema(metadata.getFileMetaData().getSchema()));
             }
         } catch (IOException e) {
             LOGGER.error("Error reading Parquet file: {}", fileStatus.getPath(), e);

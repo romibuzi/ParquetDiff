@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public final class ParquetPartitions {
     private final List<ParquetPartition> partitions;
 
-    private ParquetPartitions(List<ParquetPartition> partitions) {
+    public ParquetPartitions(List<ParquetPartition> partitions) {
         this.partitions = partitions;
     }
 

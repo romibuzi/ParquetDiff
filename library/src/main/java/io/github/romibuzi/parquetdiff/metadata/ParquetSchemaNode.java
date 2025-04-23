@@ -112,6 +112,8 @@ public final class ParquetSchemaNode {
 
     /**
      * Prints the Schema from the Root node in a tree format.
+     *
+     * @param printStream The stream to write into, ex: System.out.
      */
     public void print(PrintStream printStream) {
         if (ParquetSchemaType.MESSAGE != type) {

@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class ParquetSchemaNodePathTest {
     @Test
     void addComponent() {
-        new ParquetSchemaNodePath(List.of("tt"));
         ParquetSchemaNodePath emptyPath = new ParquetSchemaNodePath();
 
         ParquetSchemaNodePath rootPath = emptyPath.addComponent("root");

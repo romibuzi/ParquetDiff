@@ -51,7 +51,7 @@ final class ParquetTypeVisitor implements TypeVisitor {
         return root;
     }
 
-    ParquetSchemaType findGroupType(GroupType groupType) {
+    private ParquetSchemaType findGroupType(GroupType groupType) {
         LogicalTypeAnnotation logicalType = groupType.getLogicalTypeAnnotation();
         if (logicalType == null) {
             return ParquetSchemaType.GROUP;

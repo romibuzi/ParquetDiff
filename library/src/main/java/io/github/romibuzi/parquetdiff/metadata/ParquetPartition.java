@@ -3,7 +3,7 @@ package io.github.romibuzi.parquetdiff.metadata;
 import java.util.Objects;
 
 /**
- * Represents a single partition.
+ * Represents a single key value partition.
  */
 public final class ParquetPartition {
     private final String key;

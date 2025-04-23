@@ -9,23 +9,50 @@ import java.util.stream.Collectors;
 public final class ParquetSchemaNodePath {
     private final List<String> components;
 
+    /**
+     * <p>
+     * Instantiate a ParquetSchemaNodePath with the given components list. Example:
+     * <pre>{@code
+     * ParquetSchemaNodePath nodePath = new ParquetSchemaNodePath(List.of("root", "address", "city"));
+     * }</pre>
+     *
+     * @param components components of the Path
+     */
     public ParquetSchemaNodePath(List<String> components) {
         this.components = components;
     }
 
+    /**
+     * Instantiate an empty path.
+     */
     public ParquetSchemaNodePath() {
         this(Collections.emptyList());
     }
 
-    public ParquetSchemaNodePath(String... segments) {
-        this(Arrays.stream(segments).collect(Collectors.toList()));
+    /**
+     * <p>
+     * Instantiate a ParquetSchemaNodePath with the given components varargs. Example:
+     * <pre>{@code
+     * ParquetSchemaNodePath nodePath = new ParquetSchemaNodePath("root", "address", "city");
+     * }</pre>
+     *
+     * @param components components of the Path
+     */
+    public ParquetSchemaNodePath(String... components) {
+        this(Arrays.stream(components).collect(Collectors.toList()));
     }
 
     /**
      * Adds a new component to the current path.
+     * <pre>{@code
+     * ParquetSchemaNodePath nodePath = new ParquetSchemaNodePath("root", "address");
+     * ParquetSchemaNodePath newNodePath = nodePath.addComponent(""city"");
+     * nodePath.getComponents(); // ["root", "address"]
+     * newNodePath.getComponents(); // ["root", "address", "city"]
+     * }</pre>
      *
      * @param component The new component.
-     * @return a new ParquetSchemaNodePath instance with the component appended.
+     * @return A new ParquetSchemaNodePath instance with the component appended.
      */
     public ParquetSchemaNodePath addComponent(String component) {
         ArrayList<String> newSegments = new ArrayList<>(this.components);
@@ -41,6 +68,13 @@ public final class ParquetSchemaNodePath {
     }
 
     /**
+     * <p>
+     * Export the path as string. Example:
+     * <pre>{@code
+     * ParquetSchemaNodePath nodePath = new ParquetSchemaNodePath("root", "address", "city");
+     * nodePath.toPathString("||"); // root||address|city
+     * }</pre>
+     *
      * @param delimiter The delimiter to use between components.
      * @return The string representation of the path.
      */

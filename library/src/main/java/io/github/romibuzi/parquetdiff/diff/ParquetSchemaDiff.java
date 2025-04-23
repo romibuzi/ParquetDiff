@@ -42,22 +42,6 @@ public final class ParquetSchemaDiff {
                 .anyMatch(list -> !list.isEmpty());
     }
 
-    void addAdditionalNode(ParquetSchemaNodePath nodePath) {
-        additionalNodes.add(nodePath);
-    }
-
-    void addMissingNode(ParquetSchemaNodePath nodePath) {
-        missingNodes.add(nodePath);
-    }
-
-    void addTypeDiff(ParquetSchemaTypeDiff typeDiff) {
-        typeDiffs.add(typeDiff);
-    }
-
-    void addPrimitiveTypeDiff(ParquetSchemaPrimitiveTypeDiff primitiveTypeDiff) {
-        primitiveTypeDiffs.add(primitiveTypeDiff);
-    }
-
     /**
      * @return Additional fields in the second schema.
      */
@@ -89,7 +73,7 @@ public final class ParquetSchemaDiff {
     /**
      * Prints a summary of all schema differences.
      *
-     * @param printStream the stream to write into.
+     * @param printStream The stream to write into, ex: System.out.
      */
     public void printDifferences(PrintStream printStream) {
         if (!hasDifferences()) {
@@ -104,20 +88,36 @@ public final class ParquetSchemaDiff {
         printPrimitiveTypeDiffs(printStream);
     }
 
-    private void printAdditionalNodes(PrintStream printStream) {
+    void addAdditionalNode(ParquetSchemaNodePath nodePath) {
+        additionalNodes.add(nodePath);
+    }
+
+    void addMissingNode(ParquetSchemaNodePath nodePath) {
+        missingNodes.add(nodePath);
+    }
+
+    void addTypeDiff(ParquetSchemaTypeDiff typeDiff) {
+        typeDiffs.add(typeDiff);
+    }
+
+    void addPrimitiveTypeDiff(ParquetSchemaPrimitiveTypeDiff primitiveTypeDiff) {
+        primitiveTypeDiffs.add(primitiveTypeDiff);
+    }
+
+    void printAdditionalNodes(PrintStream printStream) {
         additionalNodes.forEach(node -> printStream.printf("additional field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    private void printMissingNodes(PrintStream printStream) {
+    void printMissingNodes(PrintStream printStream) {
         missingNodes.forEach(node -> printStream.printf("missing field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    private void printTypeDiffs(PrintStream printStream) {
+    void printTypeDiffs(PrintStream printStream) {
         typeDiffs.forEach(typeDiff -> printStream.printf("different field type for '%s': '%s' instead of '%s'.%s",
                 typeDiff.getNodePath(), typeDiff.getNewType(), typeDiff.getOldType(), System.lineSeparator()));
     }
 
-    private void printPrimitiveTypeDiffs(PrintStream printStream) {
+    void printPrimitiveTypeDiffs(PrintStream printStream) {
         primitiveTypeDiffs.forEach(primitiveDiff -> printStream.printf("different field primitive type for '%s': '%s' "
                         + "instead of '%s'.%s", primitiveDiff.getNodePath(), primitiveDiff.getNewType(),
                 primitiveDiff.getOldType(), System.lineSeparator()));
