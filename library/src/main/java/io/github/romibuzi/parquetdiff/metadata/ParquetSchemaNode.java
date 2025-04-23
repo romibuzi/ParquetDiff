@@ -20,6 +20,8 @@ public final class ParquetSchemaNode {
     private final List<ParquetSchemaNode> children;
 
     /**
+     * Creates a ParquetSchemaNode instance with children.
+     *
      * @param name          The name of the schema node.
      * @param type          The type of the schema node
      * @param primitiveType The primitive type name, applicable if the node is a primitive.
@@ -49,7 +51,7 @@ public final class ParquetSchemaNode {
      * @param child The child node to be added.
      * @throws UnsupportedOperationException if the node is not a group node.
      */
-    public void addChild(ParquetSchemaNode child) {
+    public void addChild(ParquetSchemaNode child) throws UnsupportedOperationException {
         if (ParquetSchemaType.PRIMITIVE == type) {
             throw new UnsupportedOperationException("Primitive field can't have children");
         }
@@ -57,22 +59,43 @@ public final class ParquetSchemaNode {
         children.add(child);
     }
 
+    /**
+     * Name of the node, used when building a Map representation of node's children.
+     *
+     * @return name of the node.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return type of the node.
+     */
     public ParquetSchemaType getType() {
         return type;
     }
 
+    /**
+     * @return primitive of the node.
+     */
     public PrimitiveType.PrimitiveTypeName getPrimitiveType() {
         return primitiveType;
     }
 
+    /**
+     * The logical type associated to the primitive type.
+     * This type is defined for some primitives only, like {@link PrimitiveType.PrimitiveTypeName#BINARY} being
+     * associated to {@link LogicalTypeAnnotation#stringType()}. Otherwise, it's null.
+     *
+     * @return logical type of the node.
+     */
     public LogicalTypeAnnotation getLogicalType() {
         return logicalType;
     }
 
+    /**
+     * @return children of the node.
+     */
     public List<ParquetSchemaNode> getChildren() {
         return children;
     }
@@ -111,11 +134,12 @@ public final class ParquetSchemaNode {
     }
 
     /**
-     * Prints the Schema from the Root node in a tree format.
+     * Prints the Schema in a tree format.
      *
      * @param printStream The stream to write into, ex: System.out.
+     * @throws UnsupportedOperationException if node is not a Root schema.
      */
-    public void print(PrintStream printStream) {
+    public void print(PrintStream printStream) throws UnsupportedOperationException {
         if (ParquetSchemaType.MESSAGE != type) {
             throw new UnsupportedOperationException("print() can only be applied to the Root node");
         }
