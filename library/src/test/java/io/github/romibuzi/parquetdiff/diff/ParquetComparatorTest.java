@@ -229,6 +229,34 @@ class ParquetComparatorTest {
                 result.getPrimitiveTypeDiffs());
     }
 
+    @Test
+    void findSchemasDifferences() {
+        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32, null);
+        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
+        ParquetSchemaNode email = new ParquetSchemaNode("email", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
+
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                null, List.of(id, name));
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+                null, List.of(id, email));
+
+
+        ParquetDetails firstParquet = TestUtils.generateParquetDetails(firstSchema);
+        ParquetDetails secondParquet = TestUtils.generateParquetDetails(firstSchema);
+        ParquetDetails thirdParquet = TestUtils.generateParquetDetails(secondSchema);
+        ParquetDetails fourthParquet = TestUtils.generateParquetDetails(secondSchema);
+
+        ParquetSchemaDiff expectedDiff = ParquetComparator.compareSchemas(secondParquet, thirdParquet);
+        List<ParquetSchemaDiff> result = ParquetComparator.findSchemasDifferences(List.of(firstParquet, secondParquet,
+                thirdParquet, fourthParquet));
+
+        assertEquals(1, result.size());
+        assertEquals(expectedDiff, result.get(0));
+    }
+
     private ParquetSchemaNode createNestedSchema(String baseName, ParquetSchemaNode finalPrimitiveNode, int depth) {
         if (depth == 0) {
             return finalPrimitiveNode;

@@ -49,7 +49,15 @@ public final class ParquetComparator {
     }
 
     /**
-     * Compare all Parquets schemas and find differences.
+     * Iterates over a list of Parquet schemas and compares them by pair to detect differences.
+     * The first schema in the list serves as the initial reference. If differences are detected during a comparison,
+     * the reference becomes the current one in the iteration.
+     * This strategy helps to limit the number of differences reported when schema evolution occurs over time in a
+     * Parquet directory.
+     * <p>
+     * For example, given three Parquet files with different partitions values: A, B, and C,
+     * the comparison starts with A and B (using A as the reference). If differences are found, they are returned and
+     * B becomes the new reference for the next comparison. The process then continues with B and C, and so on.
      *
      * @param parquets Parquets to find schemas differences.
      * @return A list of {@link ParquetSchemaDiff} instances with all differences found.
@@ -106,7 +114,7 @@ public final class ParquetComparator {
                                             ParquetSchemaDiff diff) {
         ParquetSchemaNodePath currentPath = path == null
                 ? new ParquetSchemaNodePath(node1.getName())
-                : path.addComponent(node1.getName());
+                : path.add(node1.getName());
 
         findSchemasNodesTypesDifference(node1, node2, currentPath, diff);
 
@@ -115,7 +123,7 @@ public final class ParquetComparator {
 
         for (String childName : node1Children.keySet()) {
             if (!node2Children.containsKey(childName)) {
-                diff.addMissingNode(currentPath.addComponent(childName));
+                diff.addMissingNode(currentPath.add(childName));
             } else {
                 compareSchemasNodes(
                         node1Children.get(childName),
@@ -127,7 +135,7 @@ public final class ParquetComparator {
 
         for (String childName : node2Children.keySet()) {
             if (!node1Children.containsKey(childName)) {
-                diff.addAdditionalNode(currentPath.addComponent(childName));
+                diff.addAdditionalNode(currentPath.add(childName));
             }
         }
     }
