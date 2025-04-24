@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Provide facilities to read Parquet directory and files.
+ * Provide facilities to read Parquet directories and files.
  */
 public final class ParquetReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParquetReader.class);
@@ -55,6 +55,10 @@ public final class ParquetReader {
     public List<ParquetDetails> readParquetDirectory(Path parquetDirectoryPath) throws IOException {
         if (!fileSystem.exists(parquetDirectoryPath)) {
             throw new IOException("Parquet directory not found: " + parquetDirectoryPath);
+        }
+        FileStatus fileStatus = fileSystem.getFileStatus(parquetDirectoryPath);
+        if (!fileStatus.isDirectory()) {
+            throw new IOException("Parquet is not a directory: " + parquetDirectoryPath);
         }
         return readAllParquetsInDirectory(parquetDirectoryPath);
     }
@@ -94,7 +98,7 @@ public final class ParquetReader {
     private List<ParquetDetails> readAllParquetsInDirectory(Path path) throws IOException {
         List<ParquetDetails> results = new ArrayList<>();
 
-        for (FileStatus fileStatus : getFileStatuses(path)) {
+        for (FileStatus fileStatus : listFileStatuses(path)) {
             if (fileStatus.isDirectory()) {
                 results.addAll(readAllParquetsInDirectory(fileStatus.getPath()));
             } else if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
@@ -106,7 +110,7 @@ public final class ParquetReader {
         return results;
     }
 
-    private FileStatus[] getFileStatuses(Path path) throws IOException {
+    private FileStatus[] listFileStatuses(Path path) throws IOException {
         try {
             FileStatus[] fileStatuses = fileSystem.listStatus(path);
             Arrays.sort(fileStatuses, Comparator.comparing(FileStatus::getPath));
