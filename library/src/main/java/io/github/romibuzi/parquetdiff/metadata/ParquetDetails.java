@@ -53,10 +53,10 @@ public final class ParquetDetails {
     /**
      * Prints the Schema in a tree format.
      *
-     * @param printStream The stream to write into, ex: System.out.
+     * @param out The stream to write into, ex: System.out.
      */
-    public void printSchema(PrintStream printStream) {
-        schema.print(printStream);
+    public void printSchema(PrintStream out) {
+        schema.print(out);
     }
 
     @Override

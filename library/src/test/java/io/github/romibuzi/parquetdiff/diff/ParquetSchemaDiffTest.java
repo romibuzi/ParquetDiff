@@ -82,17 +82,17 @@ class ParquetSchemaDiffTest {
 
     @Test
     void printNoDifferences() {
-        diff.printDifferences(outputPrintStream);
+        diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
         assertEquals(1, lines.length);
         assertTrue(lines[0].contains("No differences found"));
     }
 
     @Test
-    void printDifferencesAdditionalNode() {
+    void printAdditionalNode() {
         diff.addAdditionalNode(new ParquetSchemaNodePath("name"));
         diff.addAdditionalNode(new ParquetSchemaNodePath("email"));
-        diff.printDifferences(outputPrintStream);
+        diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
         assertEquals(3, lines.length);
         assertTrue(lines[0].contains("Differences found"));
@@ -101,10 +101,10 @@ class ParquetSchemaDiffTest {
     }
 
     @Test
-    void printDifferencesMissingNode() {
+    void printMissingNode() {
         diff.addMissingNode(new ParquetSchemaNodePath("name"));
         diff.addMissingNode(new ParquetSchemaNodePath("email"));
-        diff.printDifferences(outputPrintStream);
+        diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
         assertEquals(3, lines.length);
         assertTrue(lines[0].contains("Differences found"));
@@ -113,7 +113,7 @@ class ParquetSchemaDiffTest {
     }
 
     @Test
-    void printDifferencesTypeDiff() {
+    void printTypeDiff() {
         ParquetSchemaTypeDiff first = new ParquetSchemaTypeDiff(new ParquetSchemaNodePath("name"),
                 ParquetSchemaType.PRIMITIVE,
                 ParquetSchemaType.GROUP);
@@ -122,7 +122,7 @@ class ParquetSchemaDiffTest {
                 ParquetSchemaType.PRIMITIVE);
         diff.addTypeDiff(first);
         diff.addTypeDiff(second);
-        diff.printDifferences(outputPrintStream);
+        diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
         assertEquals(3, lines.length);
         assertTrue(lines[0].contains("Differences found"));
@@ -131,14 +131,14 @@ class ParquetSchemaDiffTest {
     }
 
     @Test
-    void printDifferencesPrimitiveTypeDiff() {
+    void printPrimitiveTypeDiff() {
         ParquetSchemaPrimitiveTypeDiff first = new ParquetSchemaPrimitiveTypeDiff(new ParquetSchemaNodePath("name"),
                 PrimitiveType.PrimitiveTypeName.BINARY, PrimitiveType.PrimitiveTypeName.INT32);
         ParquetSchemaPrimitiveTypeDiff second = new ParquetSchemaPrimitiveTypeDiff(new ParquetSchemaNodePath("email"),
                 PrimitiveType.PrimitiveTypeName.INT32, PrimitiveType.PrimitiveTypeName.BINARY);
         diff.addPrimitiveTypeDiff(first);
         diff.addPrimitiveTypeDiff(second);
-        diff.printDifferences(outputPrintStream);
+        diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
         assertEquals(3, lines.length);
         assertTrue(lines[0].contains("Differences found"));

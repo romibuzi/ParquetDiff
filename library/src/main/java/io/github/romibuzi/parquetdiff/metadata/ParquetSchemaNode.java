@@ -136,17 +136,17 @@ public final class ParquetSchemaNode {
     /**
      * Prints the Schema in a tree format.
      *
-     * @param printStream The stream to write into, ex: System.out.
-     * @throws UnsupportedOperationException if node is not a Root schema.
+     * @param out The stream to write into, ex: System.out.
+     * @throws UnsupportedOperationException if node is not a complete schema.
      */
-    public void print(PrintStream printStream) throws UnsupportedOperationException {
+    public void print(PrintStream out) throws UnsupportedOperationException {
         if (ParquetSchemaType.MESSAGE != type) {
-            throw new UnsupportedOperationException("print() can only be applied to the Root node");
+            throw new UnsupportedOperationException("print() can only be called from the Root node");
         }
-        printNode(this, printStream, 0);
+        printNode(this, out, 0);
     }
 
-    private void printNode(ParquetSchemaNode node, PrintStream printStream, int indent) {
+    void printNode(ParquetSchemaNode node, PrintStream out, int indent) {
         String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
 
         String infos;
@@ -165,16 +165,16 @@ public final class ParquetSchemaNode {
                 break;
         }
 
-        printStream.println(prefix + node.name + ": " + infos);
+        out.println(prefix + node.name + ": " + infos);
 
         for (ParquetSchemaNode child : node.children) {
-            printNode(child, printStream, indent + 2);
+            printNode(child, out, indent + 2);
         }
     }
 
-    private String primitiveName() {
+    String primitiveName() {
         if (ParquetSchemaType.PRIMITIVE != type) {
-            throw new UnsupportedOperationException("primitiveName() can only be applied to a Primitive node");
+            throw new UnsupportedOperationException("primitiveName() can only be called from a Primitive node");
         }
         String primitiveTypeLower = primitiveType.name().toLowerCase(Locale.ROOT);
         if (logicalType != null) {

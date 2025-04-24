@@ -53,7 +53,7 @@ public final class Main {
             System.out.println(UNICODE_LARGE_YELLOW_SQUARE + " Parquet schemas differences found.");
             System.out.println("Reference schema:");
             parquets.get(0).printSchema(System.out);
-            schemasDifferences.forEach(diff -> diff.printDifferences(System.out));
+            schemasDifferences.forEach(diff -> diff.print(System.out));
         }
     }
 

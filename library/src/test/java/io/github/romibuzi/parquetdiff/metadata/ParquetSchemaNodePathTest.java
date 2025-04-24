@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ParquetSchemaNodePathTest {
     @Test
-    void addComponent() {
+    void add() {
         ParquetSchemaNodePath emptyPath = new ParquetSchemaNodePath();
 
-        ParquetSchemaNodePath rootPath = emptyPath.addComponent("root");
+        ParquetSchemaNodePath rootPath = emptyPath.add("root");
         assertNotEquals(emptyPath, rootPath);
         assertEquals(List.of("root"), rootPath.getComponents());
 
-        ParquetSchemaNodePath streetPath = rootPath.addComponent("street");
+        ParquetSchemaNodePath streetPath = rootPath.add("street");
         assertNotEquals(rootPath, streetPath);
         assertEquals(List.of("root", "street"), streetPath.getComponents());
     }

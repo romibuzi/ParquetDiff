@@ -6,6 +6,7 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -14,22 +15,18 @@ import java.util.stream.Stream;
 public final class ParquetSchemaDiff {
     private final ParquetDetails first;
     private final ParquetDetails second;
-    private final List<ParquetSchemaNodePath> additionalNodes;
-    private final List<ParquetSchemaNodePath> missingNodes;
-    private final List<ParquetSchemaTypeDiff> typeDiffs;
-    private final List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs;
+    private final List<ParquetSchemaNodePath> additionalNodes = new ArrayList<>();
+    private final List<ParquetSchemaNodePath> missingNodes = new ArrayList<>();
+    private final List<ParquetSchemaTypeDiff> typeDiffs = new ArrayList<>();
+    private final List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs = new ArrayList<>();
 
     /**
      * @param first  The first schema.
      * @param second The second schema.
      */
-    public ParquetSchemaDiff(ParquetDetails first, ParquetDetails second) {
+    ParquetSchemaDiff(ParquetDetails first, ParquetDetails second) {
         this.first = first;
         this.second = second;
-        this.additionalNodes = new ArrayList<>();
-        this.missingNodes = new ArrayList<>();
-        this.typeDiffs = new ArrayList<>();
-        this.primitiveTypeDiffs = new ArrayList<>();
     }
 
     /**
@@ -40,6 +37,24 @@ public final class ParquetSchemaDiff {
     public boolean hasDifferences() {
         return Stream.of(additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs)
                 .anyMatch(list -> !list.isEmpty());
+    }
+
+    /**
+     * This is the schema that served as reference when establishing differences.
+     *
+     * @return The first schema.
+     */
+    public ParquetDetails getFirst() {
+        return first;
+    }
+
+    /**
+     * This is the schema that was compared to the reference when establishing differences.
+     *
+     * @return The second schema.
+     */
+    public ParquetDetails getSecond() {
+        return second;
     }
 
     /**
@@ -73,19 +88,18 @@ public final class ParquetSchemaDiff {
     /**
      * Prints a summary of all schema differences.
      *
-     * @param printStream The stream to write into, ex: System.out.
+     * @param out The stream to write into, ex: System.out.
      */
-    public void printDifferences(PrintStream printStream) {
+    public void print(PrintStream out) {
         if (!hasDifferences()) {
-            printStream.println("No differences found in " + second.getPartitions() + ".");
+            out.println("No differences found in " + second.getPartitions() + ".");
             return;
         }
-        printStream.println("Differences found in " + second.getPartitions() + ", compared to " + first.getPartitions()
-                + ":");
-        printAdditionalNodes(printStream);
-        printMissingNodes(printStream);
-        printTypeDiffs(printStream);
-        printPrimitiveTypeDiffs(printStream);
+        out.println("Differences found in " + second.getPartitions() + ", compared to " + first.getPartitions() + ":");
+        printAdditionalNodes(out);
+        printMissingNodes(out);
+        printTypeDiffs(out);
+        printPrimitiveTypeDiffs(out);
     }
 
     void addAdditionalNode(ParquetSchemaNodePath nodePath) {
@@ -104,22 +118,40 @@ public final class ParquetSchemaDiff {
         primitiveTypeDiffs.add(primitiveTypeDiff);
     }
 
-    void printAdditionalNodes(PrintStream printStream) {
-        additionalNodes.forEach(node -> printStream.printf("additional field: '%s'.%s", node, System.lineSeparator()));
+    void printAdditionalNodes(PrintStream out) {
+        additionalNodes.forEach(node -> out.printf("additional field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    void printMissingNodes(PrintStream printStream) {
-        missingNodes.forEach(node -> printStream.printf("missing field: '%s'.%s", node, System.lineSeparator()));
+    void printMissingNodes(PrintStream out) {
+        missingNodes.forEach(node -> out.printf("missing field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    void printTypeDiffs(PrintStream printStream) {
-        typeDiffs.forEach(typeDiff -> printStream.printf("different field type for '%s': '%s' instead of '%s'.%s",
+    void printTypeDiffs(PrintStream out) {
+        typeDiffs.forEach(typeDiff -> out.printf("different field type for '%s': '%s' instead of '%s'.%s",
                 typeDiff.getNodePath(), typeDiff.getNewType(), typeDiff.getOldType(), System.lineSeparator()));
     }
 
-    void printPrimitiveTypeDiffs(PrintStream printStream) {
-        primitiveTypeDiffs.forEach(primitiveDiff -> printStream.printf("different field primitive type for '%s': '%s' "
+    void printPrimitiveTypeDiffs(PrintStream out) {
+        primitiveTypeDiffs.forEach(primitiveDiff -> out.printf("different field primitive type for '%s': '%s' "
                         + "instead of '%s'.%s", primitiveDiff.getNodePath(), primitiveDiff.getNewType(),
                 primitiveDiff.getOldType(), System.lineSeparator()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParquetSchemaDiff that = (ParquetSchemaDiff) o;
+        return Objects.equals(first, that.first) && Objects.equals(second, that.second)
+                && Objects.equals(additionalNodes, that.additionalNodes)
+                && Objects.equals(missingNodes, that.missingNodes)
+                && Objects.equals(typeDiffs, that.typeDiffs)
+                && Objects.equals(primitiveTypeDiffs, that.primitiveTypeDiffs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second, additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs);
     }
 }

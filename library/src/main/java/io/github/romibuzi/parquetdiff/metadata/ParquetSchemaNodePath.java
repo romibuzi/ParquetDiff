@@ -54,7 +54,7 @@ public final class ParquetSchemaNodePath {
      * @param component The new component.
      * @return A new ParquetSchemaNodePath instance with the component appended.
      */
-    public ParquetSchemaNodePath addComponent(String component) {
+    public ParquetSchemaNodePath add(String component) {
         ArrayList<String> newSegments = new ArrayList<>(this.components);
         newSegments.add(component);
         return new ParquetSchemaNodePath(Collections.unmodifiableList(newSegments));

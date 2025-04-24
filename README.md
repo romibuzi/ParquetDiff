@@ -67,13 +67,21 @@ import org.apache.hadoop.fs.FileSystem;
 
 import java.io.IOException;
 
-class Usage {
+class ExampleUsage {
   public static void main(String[] args) throws IOException {
     ParquetReader reader = new ParquetReader(FileSystem.get(new Configuration()));
     List<ParquetDetails> parquets = reader.readParquetDirectory("my_data.parquet");
-    List<ParquetSchemaDiff> differences = ParquetComparator.findSchemasDifferences(parquets);
-    for (ParquetSchemaDiff difference : differences) {
-      difference.printDifferences(System.out);
+    List<ParquetSchemaDiff> diffs = ParquetComparator.findSchemasDifferences(parquets);
+    for (ParquetSchemaDiff diff : diffs) {
+      // prints a summary of all differences found
+      diff.print(System.out);
+      
+      // or print each of them
+      System.out.println("differences between " + diff.getFirst() + " and " + diff.getSecond());
+      System.out.println(diff.getAdditionalNodes());
+      System.out.println(diff.getMissingNodes());
+      System.out.println(diff.getTypeDiffs());
+      System.out.println(diff.getPrimitiveTypeDiffs());
     }
   }
 }

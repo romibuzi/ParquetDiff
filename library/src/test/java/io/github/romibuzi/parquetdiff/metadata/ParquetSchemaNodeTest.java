@@ -31,4 +31,18 @@ class ParquetSchemaNodeTest {
                 () -> node.addChild(child));
         assertEquals("Primitive field can't have children", exception.getMessage());
     }
+
+    @Test
+    void primitiveName() {
+        ParquetSchemaNode node = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.INT32, null);
+        assertEquals("int32", node.primitiveName());
+    }
+
+    @Test
+    void primitiveNameLogicalType() {
+        ParquetSchemaNode node = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
+        assertEquals("string (binary)", node.primitiveName());
+    }
 }
