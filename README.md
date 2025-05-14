@@ -49,11 +49,11 @@ add dependency with maven:
 <dependency>
     <groupId>io.github.romibuzi</groupId>
     <artifactId>parquetdiff</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
-or gradle: `implementation("io.github.romibuzi:parquetdiff:1.0.0")`
+or gradle: `implementation("io.github.romibuzi:parquetdiff:1.0.0-SNAPSHOT")`
 
 usage:
 
