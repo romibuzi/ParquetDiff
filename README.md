@@ -8,15 +8,14 @@ Find schema differences in a partitioned Parquet directory.
 - 📦 **Lightweight**: Uses only Parquet and Hadoop common Java libraries.
 - 🧠 **Schema diffing**: Detects differences in Parquet individual files schemas, including nested structures.
 - ⚡  **Metadata-only parsing**: Reads only Parquet footer metadata — no data is loaded.
-- 🛠️ **Embeddable**: Use CLI tool or as a library, making it ideal for validations and CI
-  checks.
+- 🛠️ **Embeddable**: Use CLI tool or as a library, making it ideal for validations and CI checks.
 
 ### 🚀 CLI Usage
 
 ```
-java -jar cli/target/parquetdiff.jar /path/to/data.parquet # local
+java -jar parquetdiff.jar /path/to/data.parquet # local
 
-java -jar cli/target/parquetdiff.jar hdfs:///path/to/data.parquet # hdfs
+java -jar parquetdiff.jar hdfs:///path/to/data.parquet # hdfs
 ```
 
 #### 🧾 Example
