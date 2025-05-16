@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -20,8 +21,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ParquetReaderTest {
-    private static final String EMPTY_DIRECTORY =
-            Paths.get("src", "test", "resources", "empty.parquet").toAbsolutePath().toString();
     private static final String DIRECTORY =
             Paths.get("src", "test", "resources", "test_data.parquet").toAbsolutePath().toString();
     private static final Path DIRECTORY_PATH = new Path(DIRECTORY);
@@ -56,8 +55,9 @@ class ParquetReaderTest {
 
     @Test
     void readEmptyParquetDirectory() throws IOException {
+        String emptyDirectory = Files.createTempDirectory("empty.parquet").toAbsolutePath().toString();
         ParquetReader parquetReader = new ParquetReader(fileSystem);
-        List<ParquetDetails> results = parquetReader.readParquetDirectory(EMPTY_DIRECTORY);
+        List<ParquetDetails> results = parquetReader.readParquetDirectory(emptyDirectory);
         assertTrue(results.isEmpty());
     }
 
