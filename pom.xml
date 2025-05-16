@@ -28,7 +28,7 @@
         <junit.version>5.12.2</junit.version>
         <mockito.version>5.17.0</mockito.version>
 
-        <surefire-plugin.version>3.5.2</surefire-plugin.version>
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
         <flatten-plugin.version>1.7.0</flatten-plugin.version>
 
