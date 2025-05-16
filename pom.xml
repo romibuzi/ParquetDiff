@@ -33,7 +33,7 @@
         <flatten-plugin.version>1.7.0</flatten-plugin.version>
 
         <source-plugin.version>3.3.1</source-plugin.version>
-        <javadoc-plugin.version>3.6.3</javadoc-plugin.version>
+        <javadoc-plugin.version>3.11.2</javadoc-plugin.version>
         <gpg-plugin.version>3.2.7</gpg-plugin.version>
         <central-publishing-plugin.version>0.7.0</central-publishing-plugin.version>
         <maven.deploy.skip>true</maven.deploy.skip>
