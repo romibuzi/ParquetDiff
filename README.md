@@ -3,6 +3,8 @@ ParquetDiff
 
 Find schema differences in a partitioned Parquet directory.
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a95e487441c04ceea58d5d245c86040c)](https://app.codacy.com/gh/romibuzi/ParquetDiff/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 #### ✨ Features
 
 - 📦 **Lightweight**: Uses only Parquet and Hadoop common Java libraries.
