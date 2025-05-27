@@ -23,8 +23,8 @@ java -jar parquetdiff.jar hdfs:///path/to/data.parquet # hdfs
 #### 🧾 Example
 
 ```
-12:10:38.516 INFO  com.romibuzi.parquetdiff.Main - Found 527 partitions and 527 parquets files
-12:10:38.520 INFO  com.romibuzi.parquetdiff.Main - Total rows: 10000
+12:10:38.516 INFO  io.github.romibuzi.parquetdiff.Main - Found 527 partitions and 527 parquets files
+12:10:38.520 INFO  io.github.romibuzi.parquetdiff.Main - Total rows: 10000
 ✅ All Parquet partitions have the same structure.
 🟨 Parquet schemas differences found.
 Reference schema:
