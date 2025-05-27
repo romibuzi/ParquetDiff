@@ -14,6 +14,7 @@ final class ParquetTypeVisitor implements TypeVisitor {
 
     @Override
     public void visit(MessageType messageType) {
+        nodeStack.clear();
         root = ParquetSchemaNodeConverter.fromMessageType(messageType);
         enterNewParent(root);
         visitChildren(messageType);
