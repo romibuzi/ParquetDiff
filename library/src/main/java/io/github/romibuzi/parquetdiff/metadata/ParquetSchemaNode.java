@@ -2,6 +2,7 @@ package io.github.romibuzi.parquetdiff.metadata;
 
 import org.apache.parquet.schema.LogicalTypeAnnotation;
 import org.apache.parquet.schema.PrimitiveType;
+import org.apache.parquet.schema.Type;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public final class ParquetSchemaNode {
     private final String name;
     private final ParquetSchemaType type;
+    private final Type.Repetition repetition;
     private final PrimitiveType.PrimitiveTypeName primitiveType;
     private final LogicalTypeAnnotation logicalType;
     private final List<ParquetSchemaNode> children;
@@ -24,14 +26,20 @@ public final class ParquetSchemaNode {
      *
      * @param name          The name of the schema node.
      * @param type          The type of the schema node
+     * @param repetition    The repetition of the schema node.
      * @param primitiveType The primitive type name, applicable if the node is a primitive.
      * @param logicalType   Optional, logical type associated to the primitive, applicable if the node is a primitive.
      * @param children      The list of child nodes if the node is a group type.
      */
-    public ParquetSchemaNode(String name, ParquetSchemaType type, PrimitiveType.PrimitiveTypeName primitiveType,
-                             LogicalTypeAnnotation logicalType, List<ParquetSchemaNode> children) {
+    public ParquetSchemaNode(String name,
+                             ParquetSchemaType type,
+                             Type.Repetition repetition,
+                             PrimitiveType.PrimitiveTypeName primitiveType,
+                             LogicalTypeAnnotation logicalType,
+                             List<ParquetSchemaNode> children) {
         this.name = name;
         this.type = type;
+        this.repetition = repetition;
         this.primitiveType = primitiveType;
         this.logicalType = logicalType;
         this.children = children;
@@ -40,9 +48,12 @@ public final class ParquetSchemaNode {
     /**
      * Creates a ParquetSchemaNode instance without children.
      */
-    public ParquetSchemaNode(String name, ParquetSchemaType type, PrimitiveType.PrimitiveTypeName primitiveType,
+    public ParquetSchemaNode(String name,
+                             ParquetSchemaType type,
+                             Type.Repetition repetition,
+                             PrimitiveType.PrimitiveTypeName primitiveType,
                              LogicalTypeAnnotation logicalType) {
-        this(name, type, primitiveType, logicalType, new ArrayList<>());
+        this(name, type, repetition, primitiveType, logicalType, new ArrayList<>());
     }
 
     /**
@@ -73,6 +84,13 @@ public final class ParquetSchemaNode {
      */
     public ParquetSchemaType getType() {
         return type;
+    }
+
+    /**
+     * @return repetition of the node.
+     */
+    public Type.Repetition getRepetition() {
+        return repetition;
     }
 
     /**
@@ -189,12 +207,13 @@ public final class ParquetSchemaNode {
             return false;
         }
         ParquetSchemaNode that = (ParquetSchemaNode) o;
-        return Objects.equals(name, that.name) && type == that.type && primitiveType == that.primitiveType
-                && Objects.equals(logicalType, that.logicalType) && Objects.equals(children, that.children);
+        return Objects.equals(name, that.name) && type == that.type && repetition == that.repetition
+                && primitiveType == that.primitiveType && Objects.equals(logicalType, that.logicalType)
+                && Objects.equals(children, that.children);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, primitiveType, logicalType, children);
+        return Objects.hash(name, type, repetition, primitiveType, logicalType, children);
     }
 }

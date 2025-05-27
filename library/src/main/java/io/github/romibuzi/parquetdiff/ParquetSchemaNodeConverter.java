@@ -15,6 +15,7 @@ interface ParquetSchemaNodeConverter {
     static ParquetSchemaNode fromMessageType(MessageType messageType) {
         return new ParquetSchemaNode(ParquetSchemaType.MESSAGE.toString(),
                 ParquetSchemaType.MESSAGE,
+                messageType.getRepetition(),
                 null,
                 null);
     }
@@ -22,6 +23,7 @@ interface ParquetSchemaNodeConverter {
     static ParquetSchemaNode fromGroupType(GroupType groupType) {
         return new ParquetSchemaNode(groupType.getName(),
                 findGroupType(groupType),
+                groupType.getRepetition(),
                 null,
                 null);
     }
@@ -29,6 +31,7 @@ interface ParquetSchemaNodeConverter {
     static ParquetSchemaNode fromPrimitiveType(PrimitiveType primitiveType) {
         return new ParquetSchemaNode(primitiveType.getName(),
                 ParquetSchemaType.PRIMITIVE,
+                primitiveType.getRepetition(),
                 primitiveType.getPrimitiveTypeName(),
                 primitiveType.getLogicalTypeAnnotation());
     }

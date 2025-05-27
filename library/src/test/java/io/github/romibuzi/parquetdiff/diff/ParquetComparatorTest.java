@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType.MESSAGE;
+import static io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType.PRIMITIVE;
+import static org.apache.parquet.schema.Type.Repetition.REPEATED;
+import static org.apache.parquet.schema.Type.Repetition.REQUIRED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ParquetComparatorTest {
@@ -51,8 +55,10 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasIdentical() {
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, null);
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null, null);
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED,
+                null, null);
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED,
+                null, null);
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertFalse(result.hasDifferences());
@@ -60,14 +66,14 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasIdenticalWithFields() {
-        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -76,14 +82,14 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasAdditionalField() {
-        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -93,14 +99,14 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasMissingField() {
-        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -110,32 +116,32 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasDifferentFieldType() {
-        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.GROUP, null, null);
-        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.GROUP, REQUIRED, null, null);
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT64, null);
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id32));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id64));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
         assertTrue(result.hasDifferences());
         assertEquals(List.of(new ParquetSchemaTypeDiff(new ParquetSchemaNodePath("test_schema", "id"),
                 ParquetSchemaType.GROUP,
-                ParquetSchemaType.PRIMITIVE)), result.getTypeDiffs());
+                PRIMITIVE)), result.getTypeDiffs());
     }
 
     @Test
     void compareSchemasDifferentPrimitiveFieldType() {
-        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT64, null);
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id32));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id64));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -147,16 +153,16 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasAdditionalAndMissingField() {
-        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
-        ParquetSchemaNode email = new ParquetSchemaNode("email", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode email = new ParquetSchemaNode("email", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, email));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -167,21 +173,21 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasAdditionalAndMissingFieldNested() {
-        ParquetSchemaNode street = new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode street = new ParquetSchemaNode("street", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
-        ParquetSchemaNode zipCode = new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode zipCode = new ParquetSchemaNode("zip_code", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
-        ParquetSchemaNode city = new ParquetSchemaNode("city", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode city = new ParquetSchemaNode("city", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
+        ParquetSchemaNode firstAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, REQUIRED, null,
                 null, List.of(street, zipCode));
-        ParquetSchemaNode secondAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null,
+        ParquetSchemaNode secondAddress = new ParquetSchemaNode("address", ParquetSchemaType.GROUP, REQUIRED, null,
                 null, List.of(street, city));
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(firstAddress));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(secondAddress));
 
         ParquetSchemaDiff result = compareSchemas(firstSchema, secondSchema);
@@ -193,9 +199,9 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasAdditionalAndMissingFieldDeeplyNested() {
-        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
         int depth = 5;
@@ -211,9 +217,9 @@ class ParquetComparatorTest {
 
     @Test
     void compareSchemasDifferentPrimitiveFieldTypeDeeplyNested() {
-        ParquetSchemaNode id32 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id32 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode id64 = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id64 = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT64, null);
 
         int depth = 5;
@@ -231,16 +237,16 @@ class ParquetComparatorTest {
 
     @Test
     void findSchemasDifferences() {
-        ParquetSchemaNode id = new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode id = new ParquetSchemaNode("id", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.INT32, null);
-        ParquetSchemaNode name = new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode name = new ParquetSchemaNode("name", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
-        ParquetSchemaNode email = new ParquetSchemaNode("email", ParquetSchemaType.PRIMITIVE,
+        ParquetSchemaNode email = new ParquetSchemaNode("email", PRIMITIVE, REQUIRED,
                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType());
 
-        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode firstSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, name));
-        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", ParquetSchemaType.MESSAGE, null,
+        ParquetSchemaNode secondSchema = new ParquetSchemaNode("test_schema", MESSAGE, REPEATED, null,
                 null, List.of(id, email));
 
 
@@ -263,7 +269,7 @@ class ParquetComparatorTest {
         }
 
         ParquetSchemaNode child = createNestedSchema(String.valueOf(depth - 1), finalPrimitiveNode, depth - 1);
-        return new ParquetSchemaNode(baseName, ParquetSchemaType.GROUP, null, null, List.of(child));
+        return new ParquetSchemaNode(baseName, ParquetSchemaType.GROUP, REQUIRED, null, null, List.of(child));
     }
 
     private ParquetSchemaDiff compareSchemas(ParquetSchemaNode firstSchema, ParquetSchemaNode secondSchema) {

@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>Parquet Diff</name>
-    <description>A lightweight Java library for detecting differences in Parquet schemas.</description>
+    <description>A lightweight library for detecting differences in Parquet schemas.</description>
     <url>https://github.com/romibuzi/ParquetDiff</url>
 
     <licenses>
