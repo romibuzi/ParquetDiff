@@ -19,6 +19,7 @@ public final class ParquetSchemaDiff {
     private final List<ParquetSchemaNodePath> missingNodes = new ArrayList<>();
     private final List<ParquetSchemaTypeDiff> typeDiffs = new ArrayList<>();
     private final List<ParquetSchemaPrimitiveTypeDiff> primitiveTypeDiffs = new ArrayList<>();
+    private final List<ParquetSchemaRepetitionDiff> repetitionDiffs = new ArrayList<>();
 
     /**
      * @param first  The first schema.
@@ -35,7 +36,7 @@ public final class ParquetSchemaDiff {
      * @return true if any additional, missing, or type differences exist; false otherwise.
      */
     public boolean hasDifferences() {
-        return Stream.of(additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs)
+        return Stream.of(additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs, repetitionDiffs)
                 .anyMatch(list -> !list.isEmpty());
     }
 
@@ -86,6 +87,13 @@ public final class ParquetSchemaDiff {
     }
 
     /**
+     * @return Differences fields repetition (e.g. OPTIONAL vs REQUIRED).
+     */
+    public List<ParquetSchemaRepetitionDiff> getRepetitionDiffs() {
+        return repetitionDiffs;
+    }
+
+    /**
      * Prints a summary of all schema differences.
      *
      * @param out The stream to write into, ex: System.out.
@@ -100,6 +108,7 @@ public final class ParquetSchemaDiff {
         printMissingNodes(out);
         printTypeDiffs(out);
         printPrimitiveTypeDiffs(out);
+        printRepetitionDiffs(out);
     }
 
     void addAdditionalNode(ParquetSchemaNodePath nodePath) {
@@ -116,6 +125,10 @@ public final class ParquetSchemaDiff {
 
     void addPrimitiveTypeDiff(ParquetSchemaPrimitiveTypeDiff primitiveTypeDiff) {
         primitiveTypeDiffs.add(primitiveTypeDiff);
+    }
+
+    void addRepetitionDiff(ParquetSchemaRepetitionDiff repetitionDiff) {
+        repetitionDiffs.add(repetitionDiff);
     }
 
     void printAdditionalNodes(PrintStream out) {
@@ -135,6 +148,12 @@ public final class ParquetSchemaDiff {
         primitiveTypeDiffs.forEach(primitiveDiff -> out.printf("different field primitive type for '%s': '%s' "
                         + "instead of '%s'.%s", primitiveDiff.getNodePath(), primitiveDiff.getNewType(),
                 primitiveDiff.getOldType(), System.lineSeparator()));
+    }
+
+    void printRepetitionDiffs(PrintStream out) {
+        repetitionDiffs.forEach(repetitionDiff -> out.printf("different repetition for '%s': '%s' "
+                        + "instead of '%s'.%s", repetitionDiff.getNodePath(), repetitionDiff.getNewRepetition(),
+                repetitionDiff.getOldRepetition(), System.lineSeparator()));
     }
 
     @Override

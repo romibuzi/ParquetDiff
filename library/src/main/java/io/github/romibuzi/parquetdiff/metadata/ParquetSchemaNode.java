@@ -152,6 +152,14 @@ public final class ParquetSchemaNode {
     }
 
     /**
+     * @param other the other node.
+     * @return true if the other node has the same repetition as the current one.
+     */
+    public boolean hasSameRepetition(ParquetSchemaNode other) {
+        return repetition.equals(other.repetition);
+    }
+
+    /**
      * Prints the Schema in a tree format.
      *
      * @param out The stream to write into, ex: System.out.

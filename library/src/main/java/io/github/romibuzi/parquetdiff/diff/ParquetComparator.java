@@ -116,7 +116,7 @@ public final class ParquetComparator {
                 ? new ParquetSchemaNodePath(node1.getName())
                 : path.add(node1.getName());
 
-        findSchemasNodesTypesDifference(node1, node2, currentPath, diff);
+        findSchemasNodesDifferences(node1, node2, currentPath, diff);
 
         Map<String, ParquetSchemaNode> node1Children = node1.getChildrenMap();
         Map<String, ParquetSchemaNode> node2Children = node2.getChildrenMap();
@@ -140,12 +140,17 @@ public final class ParquetComparator {
         }
     }
 
-    private static void findSchemasNodesTypesDifference(ParquetSchemaNode node1,
-                                                        ParquetSchemaNode node2,
-                                                        ParquetSchemaNodePath path,
-                                                        ParquetSchemaDiff diff) {
+    private static void findSchemasNodesDifferences(ParquetSchemaNode node1,
+                                                    ParquetSchemaNode node2,
+                                                    ParquetSchemaNodePath path,
+                                                    ParquetSchemaDiff diff) {
         if (!node1.hasSameType(node2)) {
             diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.getType(), node2.getType()));
+            return;
+        }
+
+        if (!node1.hasSameRepetition(node2)) {
+            diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, node1.getRepetition(), node2.getRepetition()));
             return;
         }
 
