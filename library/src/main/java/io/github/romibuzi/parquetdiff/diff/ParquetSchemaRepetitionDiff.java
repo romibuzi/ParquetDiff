@@ -1,7 +1,6 @@
 package io.github.romibuzi.parquetdiff.diff;
 
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
-import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.parquet.schema.Type;
 
 import java.util.Objects;
@@ -45,7 +44,8 @@ public final class ParquetSchemaRepetitionDiff {
             return false;
         }
         ParquetSchemaRepetitionDiff that = (ParquetSchemaRepetitionDiff) o;
-        return Objects.equals(nodePath, that.nodePath) && oldRepetition == that.oldRepetition && newRepetition == that.newRepetition;
+        return Objects.equals(nodePath, that.nodePath) && oldRepetition == that.oldRepetition
+                && newRepetition == that.newRepetition;
     }
 
     @Override

@@ -166,11 +166,13 @@ public final class ParquetSchemaDiff {
                 && Objects.equals(additionalNodes, that.additionalNodes)
                 && Objects.equals(missingNodes, that.missingNodes)
                 && Objects.equals(typeDiffs, that.typeDiffs)
-                && Objects.equals(primitiveTypeDiffs, that.primitiveTypeDiffs);
+                && Objects.equals(primitiveTypeDiffs, that.primitiveTypeDiffs)
+                && Objects.equals(repetitionDiffs, that.repetitionDiffs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(first, second, additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs);
+        return Objects.hash(first, second, additionalNodes, missingNodes, typeDiffs, primitiveTypeDiffs,
+                repetitionDiffs);
     }
 }
