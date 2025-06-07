@@ -151,7 +151,6 @@ public final class ParquetComparator {
 
         if (!node1.hasSameRepetition(node2)) {
             diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, node1.getRepetition(), node2.getRepetition()));
-            return;
         }
 
         if (!node1.hasSamePrimitiveType(node2)) {
