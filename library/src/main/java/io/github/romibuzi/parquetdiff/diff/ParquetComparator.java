@@ -144,13 +144,13 @@ public final class ParquetComparator {
                                                     ParquetSchemaNode node2,
                                                     ParquetSchemaNodePath path,
                                                     ParquetSchemaDiff diff) {
-        if (!node1.hasSameType(node2)) {
-            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.getType(), node2.getType()));
-            return;
-        }
-
         if (!node1.hasSameRepetition(node2)) {
             diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, node1.getRepetition(), node2.getRepetition()));
+        }
+
+        if (!node1.hasSameType(node2)) {
+            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.getType(), node2.getType()));
+            return; // no need to further compare primitive types if both nodes are not primitives
         }
 
         if (!node1.hasSamePrimitiveType(node2)) {
