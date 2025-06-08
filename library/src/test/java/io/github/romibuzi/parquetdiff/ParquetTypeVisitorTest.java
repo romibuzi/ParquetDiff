@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.apache.parquet.schema.Type.Repetition.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParquetTypeVisitorTest {
@@ -20,9 +21,11 @@ class ParquetTypeVisitorTest {
         String schemaInput = "message test_schema { required int32 id; }";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
-                new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, PrimitiveType.PrimitiveTypeName.INT32, null)
-        ));
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, REPEATED, null, null,
+                List.of(
+                        new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, REQUIRED,
+                                PrimitiveType.PrimitiveTypeName.INT32, null)
+                ));
 
         assertEquals(expected, schema);
     }
@@ -36,12 +39,13 @@ class ParquetTypeVisitorTest {
                 "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
-                new ParquetSchemaNode("list_field", ParquetSchemaType.LIST, null, null, List.of(
-                        new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE,
-                                PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType())
-                ))
-        ));
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, REPEATED, null, null,
+                List.of(
+                        new ParquetSchemaNode("list_field", ParquetSchemaType.LIST, REPEATED, null, null, List.of(
+                                new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE, REQUIRED,
+                                        PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType())
+                        ))
+                ));
 
         assertEquals(expected, schema);
     }
@@ -56,14 +60,15 @@ class ParquetTypeVisitorTest {
                 "}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null, List.of(
-                new ParquetSchemaNode("map_field", ParquetSchemaType.MAP, null, null, List.of(
-                        new ParquetSchemaNode("key", ParquetSchemaType.PRIMITIVE,
-                                PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType()),
-                        new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE,
-                                PrimitiveType.PrimitiveTypeName.INT32, null)
-                ))
-        ));
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, REPEATED, null, null,
+                List.of(
+                        new ParquetSchemaNode("map_field", ParquetSchemaType.MAP, REPEATED, null, null, List.of(
+                                new ParquetSchemaNode("key", ParquetSchemaType.PRIMITIVE, REQUIRED,
+                                        PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType()),
+                                new ParquetSchemaNode("value", ParquetSchemaType.PRIMITIVE, OPTIONAL,
+                                        PrimitiveType.PrimitiveTypeName.INT32, null)
+                        ))
+                ));
 
         assertEquals(expected, schema);
     }
@@ -83,18 +88,19 @@ class ParquetTypeVisitorTest {
         ParquetSchemaNode expected = new ParquetSchemaNode(
                 "root",
                 ParquetSchemaType.MESSAGE,
+                REPEATED,
                 null,
                 null,
                 List.of(
-                        new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE,
+                        new ParquetSchemaNode("id", ParquetSchemaType.PRIMITIVE, REQUIRED,
                                 PrimitiveType.PrimitiveTypeName.INT32, null),
-                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, null, List.of(
-                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
+                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, REQUIRED, null, null, List.of(
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, REQUIRED,
                                         PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType()),
-                                new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE,
+                                new ParquetSchemaNode("zip_code", ParquetSchemaType.PRIMITIVE, REQUIRED,
                                         PrimitiveType.PrimitiveTypeName.INT64, null)
                         )),
-                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, OPTIONAL,
                                 PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType())
                 ));
 
@@ -116,14 +122,15 @@ class ParquetTypeVisitorTest {
         ParquetSchemaNode expected = new ParquetSchemaNode(
                 "root",
                 ParquetSchemaType.MESSAGE,
+                REPEATED,
                 null,
                 null,
                 List.of(
-                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, null, null, List.of(
-                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE,
+                        new ParquetSchemaNode("address", ParquetSchemaType.GROUP, REQUIRED, null, null, List.of(
+                                new ParquetSchemaNode("street", ParquetSchemaType.PRIMITIVE, REQUIRED,
                                         PrimitiveType.PrimitiveTypeName.BINARY, LogicalTypeAnnotation.stringType()),
-                                new ParquetSchemaNode("tenant", ParquetSchemaType.GROUP, null, null, List.of(
-                                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE,
+                                new ParquetSchemaNode("tenant", ParquetSchemaType.GROUP, REQUIRED, null, null, List.of(
+                                        new ParquetSchemaNode("name", ParquetSchemaType.PRIMITIVE, REQUIRED,
                                                 PrimitiveType.PrimitiveTypeName.BINARY,
                                                 LogicalTypeAnnotation.stringType())
                                 ))
@@ -138,7 +145,7 @@ class ParquetTypeVisitorTest {
         String schemaInput = "message test_schema {}";
 
         ParquetSchemaNode schema = extractSchema(schemaInput);
-        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, null, null);
+        ParquetSchemaNode expected = new ParquetSchemaNode("root", ParquetSchemaType.MESSAGE, REPEATED, null, null);
 
         assertEquals(expected, schema);
     }

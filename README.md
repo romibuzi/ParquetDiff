@@ -83,6 +83,7 @@ class ExampleUsage {
       System.out.println(diff.getMissingNodes());
       System.out.println(diff.getTypeDiffs());
       System.out.println(diff.getPrimitiveTypeDiffs());
+      System.out.println(diff.getRepetitionDiffs());
     }
   }
 }

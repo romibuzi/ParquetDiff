@@ -5,6 +5,7 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.parquet.schema.PrimitiveType;
+import org.apache.parquet.schema.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -81,6 +82,18 @@ class ParquetSchemaDiffTest {
     }
 
     @Test
+    void repetitionDiff() {
+        ParquetSchemaRepetitionDiff first = new ParquetSchemaRepetitionDiff(new ParquetSchemaNodePath("name"),
+                Type.Repetition.OPTIONAL, Type.Repetition.REQUIRED);
+        ParquetSchemaRepetitionDiff second = new ParquetSchemaRepetitionDiff(new ParquetSchemaNodePath("email"),
+                Type.Repetition.REQUIRED, Type.Repetition.OPTIONAL);
+        diff.addRepetitionDiff(first);
+        diff.addRepetitionDiff(second);
+        assertTrue(diff.hasDifferences());
+        assertEquals(List.of(first, second), diff.getRepetitionDiffs());
+    }
+
+    @Test
     void printNoDifferences() {
         diff.print(outputPrintStream);
         String[] lines = TestUtils.getLines(outputStream.toString());
@@ -144,5 +157,21 @@ class ParquetSchemaDiffTest {
         assertTrue(lines[0].contains("Differences found"));
         assertEquals("different field primitive type for 'name': 'INT32' instead of 'BINARY'.", lines[1]);
         assertEquals("different field primitive type for 'email': 'BINARY' instead of 'INT32'.", lines[2]);
+    }
+
+    @Test
+    void printRepetitionDiff() {
+        ParquetSchemaRepetitionDiff first = new ParquetSchemaRepetitionDiff(new ParquetSchemaNodePath("name"),
+                Type.Repetition.OPTIONAL, Type.Repetition.REQUIRED);
+        ParquetSchemaRepetitionDiff second = new ParquetSchemaRepetitionDiff(new ParquetSchemaNodePath("email"),
+                Type.Repetition.REQUIRED, Type.Repetition.OPTIONAL);
+        diff.addRepetitionDiff(first);
+        diff.addRepetitionDiff(second);
+        diff.print(outputPrintStream);
+        String[] lines = TestUtils.getLines(outputStream.toString());
+        assertEquals(3, lines.length);
+        assertTrue(lines[0].contains("Differences found"));
+        assertEquals("different repetition for 'name': 'REQUIRED' instead of 'OPTIONAL'.", lines[1]);
+        assertEquals("different repetition for 'email': 'OPTIONAL' instead of 'REQUIRED'.", lines[2]);
     }
 }
