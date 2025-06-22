@@ -4,8 +4,6 @@ import io.github.romibuzi.parquetdiff.diff.ParquetComparator;
 import io.github.romibuzi.parquetdiff.diff.ParquetSchemaDiff;
 import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
 import io.github.romibuzi.parquetdiff.metadata.ParquetPartitions;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +63,6 @@ public final class Main {
         return parquets.stream().mapToLong(ParquetDetails::getNumRows).sum();
     }
 
-    private static FileSystem initFileSystem() throws IOException {
-        return FileSystem.get(new Configuration());
-    }
-
     private static String toUnicodeString(int code) {
         return new String(Character.toChars(code));
     }
@@ -83,8 +77,7 @@ public final class Main {
         }
 
         try {
-            FileSystem fileSystem = initFileSystem();
-            Main main = new Main(new ParquetReader(fileSystem));
+            Main main = new Main(ParquetReader.getDefault());
             main.run(args[0]);
         } catch (IOException e) {
             LOGGER.error("Error occurred", e);
