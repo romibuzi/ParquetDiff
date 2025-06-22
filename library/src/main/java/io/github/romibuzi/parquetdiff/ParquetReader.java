@@ -2,6 +2,7 @@ package io.github.romibuzi.parquetdiff;
 
 import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -43,6 +44,14 @@ public final class ParquetReader {
      */
     public ParquetReader(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
+    }
+
+    /**
+     * @return ParquetReader with a standard Hadoop configuration.
+     * @throws IOException If an IO error happened during Hadoop Filesystem initialization.
+     */
+    public static ParquetReader getDefault() throws IOException {
+        return new ParquetReader(FileSystem.get(new Configuration()));
     }
 
     /**
