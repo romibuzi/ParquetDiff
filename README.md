@@ -89,6 +89,8 @@ class ExampleUsage {
 }
 ```
 
+See the [Wiki](https://github.com/romibuzi/ParquetDiff/wiki) for more examples.
+
 ### ☕ Requirements
 
 - Java **11 or higher**
