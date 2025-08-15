@@ -121,6 +121,20 @@ class ParquetReaderTest {
         assertEquals("Parquet is not a file: " + DIRECTORY, exception.getMessage());
     }
 
+    @Test
+    void readParquetFileNotFound() throws IOException {
+        Path parquetFilePath = parquetPartitionPath("date=2020-12-27");
+        FileSystem fileSystem = mock(FileSystem.class);
+        when(fileSystem.exists(eq(parquetFilePath))).thenReturn(false);
+        ParquetReader parquetReader = new ParquetReader(fileSystem);
+
+        IOException exception = assertThrows(IOException.class, () -> parquetReader.readParquetFile(parquetFilePath));
+
+        assertEquals("Parquet file not found: " + parquetFilePath, exception.getMessage());
+        verify(fileSystem).exists(eq(parquetFilePath));
+        verifyNoMoreInteractions(fileSystem);
+    }
+
     private Path parquetPartitionPath(String partition) {
         URI uri = Paths.get(DIRECTORY, partition, "part-00000.parquet").toUri();
         return new Path(uri);
