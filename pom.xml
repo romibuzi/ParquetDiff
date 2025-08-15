@@ -22,6 +22,11 @@
         <parquet.version>1.15.2</parquet.version>
         <hadoop.version>3.4.1</hadoop.version>
 
+        <!-- hadoop transitive dependencies updated due to security alerts -->
+        <apache-commons.version>3.18.0</apache-commons.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <jackson-databind.version>2.19.2</jackson-databind.version>
+
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.18</logback.version>
 
@@ -54,6 +59,10 @@
                 <version>${hadoop.version}</version>
                 <exclusions>
                     <exclusion>
+                        <groupId>org.apache.avro</groupId>
+                        <artifactId>avro</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-reload4j</artifactId>
                     </exclusion>
@@ -64,6 +73,10 @@
                 <artifactId>hadoop-mapreduce-client-core</artifactId>
                 <version>${hadoop.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.avro</groupId>
+                        <artifactId>avro</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
                         <artifactId>hadoop-yarn-client</artifactId>
@@ -77,6 +90,21 @@
                         <artifactId>slf4j-reload4j</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
