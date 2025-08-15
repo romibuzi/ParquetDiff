@@ -175,23 +175,22 @@ public final class ParquetSchemaNode {
     void printNode(ParquetSchemaNode node, PrintStream out, int indent) {
         String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
 
-        String infos;
+        String suffix = ":";
         switch (node.type) {
             case GROUP:
             case LIST:
             case MAP:
-                infos = node.type.toString();
+                suffix = suffix + " " + node.type;
                 break;
             case PRIMITIVE:
-                infos = node.primitiveName();
+                suffix = suffix + " " + node.primitiveName();
                 break;
             case MESSAGE:
             default:
-                infos = "";
                 break;
         }
 
-        out.println(prefix + node.name + ": " + infos);
+        out.println(prefix + node.name + suffix);
 
         for (ParquetSchemaNode child : node.children) {
             printNode(child, out, indent + 2);
