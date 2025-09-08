@@ -19,7 +19,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <parquet.version>1.15.2</parquet.version>
+        <parquet.version>1.16.0</parquet.version>
         <hadoop.version>3.4.2</hadoop.version>
 
         <!-- hadoop transitive dependencies updated due to security alerts -->
