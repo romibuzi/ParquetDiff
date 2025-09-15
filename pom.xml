@@ -43,7 +43,7 @@
         <central-publishing-plugin.version>0.8.0</central-publishing-plugin.version>
         <maven.deploy.skip>true</maven.deploy.skip>
 
-        <shade-plugin.version>3.6.0</shade-plugin.version>
+        <shade-plugin.version>3.6.1</shade-plugin.version>
     </properties>
 
     <dependencyManagement>
