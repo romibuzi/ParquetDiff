@@ -33,7 +33,7 @@
         <junit.version>5.13.4</junit.version>
         <mockito.version>5.19.0</mockito.version>
 
-        <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
         <flatten-plugin.version>1.7.2</flatten-plugin.version>
 
