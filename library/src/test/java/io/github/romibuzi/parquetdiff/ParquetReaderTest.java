@@ -89,27 +89,22 @@ class ParquetReaderTest {
         verifyNoMoreInteractions(fileSystem);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void readParquetDirectoryWithError() throws IOException {
         FileStatus fileStatus = mock(FileStatus.class);
         when(fileStatus.isDirectory()).thenReturn(true);
 
-        RemoteIterator<LocatedFileStatus> iterator = (RemoteIterator<LocatedFileStatus>) mock(RemoteIterator.class);
-        when(iterator.hasNext()).thenReturn(true);
-        when(iterator.next()).thenThrow(IOException.class);
-
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.exists(eq(DIRECTORY_PATH))).thenReturn(true);
         when(fileSystem.getFileStatus(eq(DIRECTORY_PATH))).thenReturn(fileStatus);
-        when(fileSystem.listFiles(eq(DIRECTORY_PATH), eq(true))).thenReturn(iterator);
+        when(fileSystem.listStatus(eq(DIRECTORY_PATH))).thenThrow(IOException.class);
 
         ParquetReader parquetReader = new ParquetReader(fileSystem);
         assertThrows(IOException.class, () -> parquetReader.readParquetDirectory(DIRECTORY));
 
         verify(fileSystem).exists(eq(DIRECTORY_PATH));
         verify(fileSystem).getFileStatus(eq(DIRECTORY_PATH));
-        verify(fileSystem).listFiles(eq(DIRECTORY_PATH), eq(true));
+        verify(fileSystem).listStatus(eq(DIRECTORY_PATH));
         verifyNoMoreInteractions(fileSystem);
     }
 
