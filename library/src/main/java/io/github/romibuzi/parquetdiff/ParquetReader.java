@@ -3,7 +3,11 @@ package io.github.romibuzi.parquetdiff;
 import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.apache.parquet.hadoop.metadata.BlockMetaData;
@@ -109,7 +113,7 @@ public final class ParquetReader {
 
         RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(path, true);
         while (iterator.hasNext()) {
-            LocatedFileStatus fileStatus = iterator.next();
+            FileStatus fileStatus = iterator.next();
             if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
                 ParquetDetails details = extractParquetDetails(fileStatus);
                 results.add(details);
