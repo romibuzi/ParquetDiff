@@ -125,11 +125,7 @@ public final class ParquetComparator {
             if (!secondChildren.containsKey(child)) {
                 diff.addMissingNode(currentPath.add(child));
             } else {
-                compareSchemasNodes(
-                        firstChildren.get(child),
-                        secondChildren.get(child),
-                        currentPath,
-                        diff);
+                compareSchemasNodes(firstChildren.get(child), secondChildren.get(child), currentPath, diff);
             }
         }
 
@@ -140,12 +136,11 @@ public final class ParquetComparator {
         }
     }
 
-    private static void findSchemasNodesDifferences(ParquetSchemaNode first,
-                                                    ParquetSchemaNode second,
-                                                    ParquetSchemaNodePath path,
-                                                    ParquetSchemaDiff diff) {
+    private static void findSchemasNodesDifferences(ParquetSchemaNode first, ParquetSchemaNode second,
+                                                    ParquetSchemaNodePath path, ParquetSchemaDiff diff) {
         if (!first.hasSameRepetition(second)) {
-            diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, first.getRepetition(), second.getRepetition()));
+            diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, first.getRepetition(),
+                    second.getRepetition()));
         }
 
         if (!first.hasSameType(second)) {

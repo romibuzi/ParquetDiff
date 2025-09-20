@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.apache.parquet.schema.Type.Repetition.*;
+import static org.apache.parquet.schema.Type.Repetition.OPTIONAL;
+import static org.apache.parquet.schema.Type.Repetition.REPEATED;
+import static org.apache.parquet.schema.Type.Repetition.REQUIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParquetTypeVisitorTest {

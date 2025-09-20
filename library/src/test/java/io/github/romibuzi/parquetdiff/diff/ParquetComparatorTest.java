@@ -1,7 +1,11 @@
 package io.github.romibuzi.parquetdiff.diff;
 
 import io.github.romibuzi.parquetdiff.TestUtils;
-import io.github.romibuzi.parquetdiff.metadata.*;
+import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
+import io.github.romibuzi.parquetdiff.metadata.ParquetPartitions;
+import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
+import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
+import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.schema.LogicalTypeAnnotation;
 import org.apache.parquet.schema.PrimitiveType;
@@ -14,7 +18,9 @@ import static io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType.MESSAGE;
 import static io.github.romibuzi.parquetdiff.metadata.ParquetSchemaType.PRIMITIVE;
 import static org.apache.parquet.schema.Type.Repetition.REPEATED;
 import static org.apache.parquet.schema.Type.Repetition.REQUIRED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ParquetComparatorTest {
     @Test

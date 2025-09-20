@@ -1,7 +1,11 @@
 package io.github.romibuzi.parquetdiff;
 
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
-import org.apache.parquet.schema.*;
+import org.apache.parquet.schema.GroupType;
+import org.apache.parquet.schema.MessageType;
+import org.apache.parquet.schema.PrimitiveType;
+import org.apache.parquet.schema.Type;
+import org.apache.parquet.schema.TypeVisitor;
 
 import java.util.Stack;
 
