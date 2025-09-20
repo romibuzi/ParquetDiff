@@ -73,11 +73,11 @@ public final class ParquetComparator {
         ParquetDetails reference = iterator.next();
 
         while (iterator.hasNext()) {
-            ParquetDetails parquetDetails = iterator.next();
-            ParquetSchemaDiff diff = compareSchemas(reference, parquetDetails);
+            ParquetDetails parquet = iterator.next();
+            ParquetSchemaDiff diff = compareSchemas(reference, parquet);
             if (diff.hasDifferences()) {
                 results.add(diff);
-                reference = parquetDetails;
+                reference = parquet;
             }
         }
 
@@ -108,54 +108,54 @@ public final class ParquetComparator {
         return diff;
     }
 
-    private static void compareSchemasNodes(ParquetSchemaNode node1,
-                                            ParquetSchemaNode node2,
+    private static void compareSchemasNodes(ParquetSchemaNode first,
+                                            ParquetSchemaNode second,
                                             ParquetSchemaNodePath path,
                                             ParquetSchemaDiff diff) {
         ParquetSchemaNodePath currentPath = path == null
-                ? new ParquetSchemaNodePath(node1.getName())
-                : path.add(node1.getName());
+                ? new ParquetSchemaNodePath(first.getName())
+                : path.add(first.getName());
 
-        findSchemasNodesDifferences(node1, node2, currentPath, diff);
+        findSchemasNodesDifferences(first, second, currentPath, diff);
 
-        Map<String, ParquetSchemaNode> node1Children = node1.getChildrenMap();
-        Map<String, ParquetSchemaNode> node2Children = node2.getChildrenMap();
+        Map<String, ParquetSchemaNode> firstChildren = first.getChildrenMap();
+        Map<String, ParquetSchemaNode> secondChildren = second.getChildrenMap();
 
-        for (String childName : node1Children.keySet()) {
-            if (!node2Children.containsKey(childName)) {
-                diff.addMissingNode(currentPath.add(childName));
+        for (String child : firstChildren.keySet()) {
+            if (!secondChildren.containsKey(child)) {
+                diff.addMissingNode(currentPath.add(child));
             } else {
                 compareSchemasNodes(
-                        node1Children.get(childName),
-                        node2Children.get(childName),
+                        firstChildren.get(child),
+                        secondChildren.get(child),
                         currentPath,
                         diff);
             }
         }
 
-        for (String childName : node2Children.keySet()) {
-            if (!node1Children.containsKey(childName)) {
+        for (String childName : secondChildren.keySet()) {
+            if (!firstChildren.containsKey(childName)) {
                 diff.addAdditionalNode(currentPath.add(childName));
             }
         }
     }
 
-    private static void findSchemasNodesDifferences(ParquetSchemaNode node1,
-                                                    ParquetSchemaNode node2,
+    private static void findSchemasNodesDifferences(ParquetSchemaNode first,
+                                                    ParquetSchemaNode second,
                                                     ParquetSchemaNodePath path,
                                                     ParquetSchemaDiff diff) {
-        if (!node1.hasSameRepetition(node2)) {
-            diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, node1.getRepetition(), node2.getRepetition()));
+        if (!first.hasSameRepetition(second)) {
+            diff.addRepetitionDiff(new ParquetSchemaRepetitionDiff(path, first.getRepetition(), second.getRepetition()));
         }
 
-        if (!node1.hasSameType(node2)) {
-            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, node1.getType(), node2.getType()));
-            return; // no need to further compare primitive types if both nodes are not primitives
+        if (!first.hasSameType(second)) {
+            diff.addTypeDiff(new ParquetSchemaTypeDiff(path, first.getType(), second.getType()));
+            return; // no need to further compare primitive types if one node is not primitive
         }
 
-        if (!node1.hasSamePrimitiveType(node2)) {
-            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(path, node1.getPrimitiveType(),
-                    node2.getPrimitiveType()));
+        if (!first.hasSamePrimitiveType(second)) {
+            diff.addPrimitiveTypeDiff(new ParquetSchemaPrimitiveTypeDiff(path, first.getPrimitiveType(),
+                    second.getPrimitiveType()));
         }
     }
 }
