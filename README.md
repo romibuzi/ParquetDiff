@@ -5,14 +5,14 @@ Find schema differences in a partitioned Parquet directory.
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a95e487441c04ceea58d5d245c86040c)](https://app.codacy.com/gh/romibuzi/ParquetDiff/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-#### ✨ Features
+#### Features
 
-- 📦 **Lightweight**: Uses only Parquet and Hadoop common Java libraries.
-- 🧠 **Schema diffing**: Detects differences in Parquet individual files schemas, including nested structures.
-- ⚡  **Metadata-only parsing**: Reads only Parquet footer metadata — no data is loaded.
-- 🛠️ **Embeddable**: Use CLI tool or as a library, making it ideal for validations and CI checks.
+- **Lightweight**: Uses only Parquet and Hadoop common Java libraries.
+- **Schema diffing**: Detects differences in Parquet individual files schemas, including nested structures.
+- **Metadata-only parsing**: Reads only Parquet footer metadata — no data is loaded.
+- **Embeddable**: Use CLI tool or as a library, making it ideal for validations and CI checks.
 
-### 🚀 CLI Usage
+### CLI Usage
 
 ```
 java -jar parquetdiff.jar /path/to/data.parquet # local
@@ -20,7 +20,7 @@ java -jar parquetdiff.jar /path/to/data.parquet # local
 java -jar parquetdiff.jar hdfs:///path/to/data.parquet # hdfs
 ```
 
-#### 🧾 Example
+#### Example
 
 ```
 12:10:38.516 INFO  io.github.romibuzi.parquetdiff.Main - Found 527 partitions and 527 parquets files
@@ -42,7 +42,7 @@ Differences found in [date=2022-05-29], compared to [date=2022-05-28]:
 additional field: 'root.people_vaccinated'.
 ```
 
-### 📚 Library Usage
+### Library Usage
 
 add dependency with maven:
 
@@ -91,12 +91,12 @@ class ExampleUsage {
 
 See the [Wiki](https://github.com/romibuzi/ParquetDiff/wiki) for more examples.
 
-### ☕ Requirements
+### Requirements
 
 - Java **11 or higher**
 - Maven
 
-### 🔧 Build from source
+### Build from source
 
 ```
 git clone https://github.com/romibuzi/ParquetDiff.git
