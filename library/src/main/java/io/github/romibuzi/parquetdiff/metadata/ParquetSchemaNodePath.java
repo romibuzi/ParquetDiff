@@ -55,9 +55,9 @@ public final class ParquetSchemaNodePath {
      * @return A new ParquetSchemaNodePath instance with the component appended.
      */
     public ParquetSchemaNodePath add(String component) {
-        ArrayList<String> newSegments = new ArrayList<>(this.components);
-        newSegments.add(component);
-        return new ParquetSchemaNodePath(Collections.unmodifiableList(newSegments));
+        ArrayList<String> newComponents = new ArrayList<>(this.components);
+        newComponents.add(component);
+        return new ParquetSchemaNodePath(Collections.unmodifiableList(newComponents));
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ParquetSchemaNodePath {
      * Export the path as string. Example:
      * <pre>{@code
      * ParquetSchemaNodePath nodePath = new ParquetSchemaNodePath("root", "address", "city");
-     * nodePath.toPathString("||"); // root||address|city
+     * nodePath.toPathString("||"); // root||address||city
      * }</pre>
      *
      * @param delimiter The delimiter to use between components.
