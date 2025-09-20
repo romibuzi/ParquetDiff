@@ -3,20 +3,20 @@ package io.github.romibuzi.parquetdiff;
 import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
+import org.apache.parquet.hadoop.metadata.BlockMetaData;
+import org.apache.parquet.hadoop.metadata.ParquetMetadata;
 import org.apache.parquet.hadoop.util.HadoopInputFile;
+import org.apache.parquet.io.InputFile;
+import org.apache.parquet.io.SeekableInputStream;
 import org.apache.parquet.schema.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -94,7 +94,7 @@ public final class ParquetReader {
         if (!fileStatus.isFile()) {
             throw new IOException("Parquet is not a file: " + parquetFilePath);
         }
-        return getParquetDetails(fileStatus);
+        return extractParquetDetails(fileStatus);
     }
 
     /**
@@ -107,11 +107,11 @@ public final class ParquetReader {
     private List<ParquetDetails> readAllParquetsInDirectory(Path path) throws IOException {
         List<ParquetDetails> results = new ArrayList<>();
 
-        for (FileStatus fileStatus : listFileStatuses(path)) {
-            if (fileStatus.isDirectory()) {
-                results.addAll(readAllParquetsInDirectory(fileStatus.getPath()));
-            } else if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
-                ParquetDetails details = getParquetDetails(fileStatus);
+        RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(path, true);
+        while (iterator.hasNext()) {
+            LocatedFileStatus fileStatus = iterator.next();
+            if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
+                ParquetDetails details = extractParquetDetails(fileStatus);
                 results.add(details);
             }
         }
@@ -119,32 +119,32 @@ public final class ParquetReader {
         return results;
     }
 
-    private FileStatus[] listFileStatuses(Path path) throws IOException {
+    private ParquetDetails extractParquetDetails(FileStatus fileStatus) throws IOException {
         try {
-            FileStatus[] fileStatuses = fileSystem.listStatus(path);
-            Arrays.sort(fileStatuses, Comparator.comparing(FileStatus::getPath));
-            return fileStatuses;
+            ParquetMetadata metadata = readParquetFooter(fileStatus);
+            return new ParquetDetails(
+                    fileStatus.getPath(),
+                    extractRowCount(metadata.getBlocks()),
+                    extractSchema(metadata.getFileMetaData().getSchema()));
         } catch (IOException e) {
-            LOGGER.error("Could not listStatus on {}", path, e);
+            LOGGER.error("Error reading Parquet footer: {}", fileStatus.getPath(), e);
             throw e;
         }
     }
 
-    private ParquetDetails getParquetDetails(FileStatus fileStatus) throws IOException {
-        try {
-            HadoopInputFile inputFile = HadoopInputFile.fromStatus(fileStatus, fileSystem.getConf());
-            try (ParquetFileReader metadata = ParquetFileReader.open(inputFile, PARQUET_READ_OPTIONS)) {
-                return new ParquetDetails(fileStatus.getPath(), metadata.getRecordCount(),
-                        extractSchema(metadata.getFileMetaData().getSchema()));
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error reading Parquet file: {}", fileStatus.getPath(), e);
-            throw e;
-        }
+    private long extractRowCount(List<BlockMetaData> blocks) {
+        return blocks.stream().mapToLong(BlockMetaData::getRowCount).sum();
     }
 
     private ParquetSchemaNode extractSchema(MessageType messageType) {
         messageType.accept(typeVisitor);
         return typeVisitor.getSchema();
+    }
+
+    private ParquetMetadata readParquetFooter(FileStatus fileStatus) throws IOException {
+        InputFile inputFile = HadoopInputFile.fromStatus(fileStatus, fileSystem.getConf());
+        try (SeekableInputStream stream = inputFile.newStream()) {
+            return ParquetFileReader.readFooter(inputFile, PARQUET_READ_OPTIONS, stream);
+        }
     }
 }
