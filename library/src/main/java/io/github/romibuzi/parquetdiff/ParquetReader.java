@@ -5,9 +5,7 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.parquet.ParquetReadOptions;
 import org.apache.parquet.hadoop.ParquetFileReader;
 import org.apache.parquet.hadoop.metadata.BlockMetaData;
@@ -20,8 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provide facilities to read Parquet directories and files.
@@ -110,13 +107,18 @@ public final class ParquetReader {
 
     private List<ParquetDetails> readAllParquetsInDirectory(Path path) throws IOException {
         List<ParquetDetails> results = new ArrayList<>();
+        Queue<Path> directoriesToProcess = new ArrayDeque<>();
+        directoriesToProcess.offer(path);
 
-        RemoteIterator<LocatedFileStatus> iterator = fileSystem.listFiles(path, true);
-        while (iterator.hasNext()) {
-            FileStatus fileStatus = iterator.next();
-            if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
-                ParquetDetails details = extractParquetDetails(fileStatus);
-                results.add(details);
+        while (!directoriesToProcess.isEmpty()) {
+            Path currentDirectory = directoriesToProcess.poll();
+            for (FileStatus fileStatus : listFileStatuses(currentDirectory)) {
+                if (fileStatus.isDirectory()) {
+                    directoriesToProcess.offer(fileStatus.getPath());
+                } else if (fileStatus.getPath().getName().endsWith(PARQUET_EXTENSION)) {
+                    ParquetDetails details = extractParquetDetails(fileStatus);
+                    results.add(details);
+                }
             }
         }
 
@@ -143,6 +145,17 @@ public final class ParquetReader {
     private ParquetSchemaNode extractSchema(MessageType messageType) {
         messageType.accept(typeVisitor);
         return typeVisitor.getSchema();
+    }
+
+    private FileStatus[] listFileStatuses(Path path) throws IOException {
+        try {
+            FileStatus[] fileStatuses = fileSystem.listStatus(path);
+            Arrays.sort(fileStatuses, Comparator.comparing(FileStatus::getPath));
+            return fileStatuses;
+        } catch (IOException e) {
+            LOGGER.error("Could not listStatus on {}", path, e);
+            throw e;
+        }
     }
 
     private ParquetMetadata readParquetFooter(FileStatus fileStatus) throws IOException {
