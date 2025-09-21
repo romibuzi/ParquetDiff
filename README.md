@@ -50,11 +50,11 @@ add dependency with maven:
 <dependency>
     <groupId>io.github.romibuzi</groupId>
     <artifactId>parquetdiff</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
-or gradle: `implementation("io.github.romibuzi:parquetdiff:1.1.0")`
+or gradle: `implementation("io.github.romibuzi:parquetdiff:1.2.0")`
 
 usage:
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.romibuzi</groupId>
         <artifactId>ParquetDiff</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </parent>
 
     <artifactId>cli</artifactId>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>io.github.romibuzi</groupId>
             <artifactId>parquetdiff</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
