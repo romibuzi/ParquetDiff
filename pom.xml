@@ -35,7 +35,7 @@
 
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
         <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
-        <flatten-plugin.version>1.7.2</flatten-plugin.version>
+        <flatten-plugin.version>1.7.3</flatten-plugin.version>
 
         <source-plugin.version>3.3.1</source-plugin.version>
         <javadoc-plugin.version>3.11.3</javadoc-plugin.version>
