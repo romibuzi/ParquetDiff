@@ -63,14 +63,12 @@ import io.github.romibuzi.parquetdiff.ParquetReader;
 import io.github.romibuzi.parquetdiff.diff.ParquetComparator;
 import io.github.romibuzi.parquetdiff.diff.ParquetSchemaDiff;
 import io.github.romibuzi.parquetdiff.metadata.ParquetDetails;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 
 import java.io.IOException;
 
 class ExampleUsage {
   public static void main(String[] args) throws IOException {
-    ParquetReader reader = new ParquetReader(FileSystem.get(new Configuration()));
+    ParquetReader reader = ParquetReader.getDefault();
     List<ParquetDetails> parquets = reader.readParquetDirectory("my_data.parquet");
     List<ParquetSchemaDiff> diffs = ParquetComparator.findSchemasDifferences(parquets);
     for (ParquetSchemaDiff diff : diffs) {
