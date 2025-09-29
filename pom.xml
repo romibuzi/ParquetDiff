@@ -23,7 +23,7 @@
         <hadoop.version>3.4.2</hadoop.version>
 
         <!-- hadoop transitive dependencies updated due to security alerts -->
-        <apache-commons.version>3.18.0</apache-commons.version>
+        <apache-commons.version>3.19.0</apache-commons.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <jackson-databind.version>2.20.0</jackson-databind.version>
 
