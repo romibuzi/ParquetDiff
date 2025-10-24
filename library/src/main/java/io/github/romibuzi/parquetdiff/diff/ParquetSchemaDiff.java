@@ -5,6 +5,7 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -62,35 +63,35 @@ public final class ParquetSchemaDiff {
      * @return Additional fields in the second schema.
      */
     public List<ParquetSchemaNodePath> getAdditionalNodes() {
-        return additionalNodes;
+        return Collections.unmodifiableList(additionalNodes);
     }
 
     /**
      * @return Missing fields in the second schema.
      */
     public List<ParquetSchemaNodePath> getMissingNodes() {
-        return missingNodes;
+        return Collections.unmodifiableList(missingNodes);
     }
 
     /**
      * @return Differences fields types (e.g. GROUP vs PRIMITIVE or LIST vs MAP).
      */
     public List<ParquetSchemaTypeDiff> getTypeDiffs() {
-        return typeDiffs;
+        return Collections.unmodifiableList(typeDiffs);
     }
 
     /**
      * @return Differences fields primitive types (e.g. INT32 vs FLOAT).
      */
     public List<ParquetSchemaPrimitiveTypeDiff> getPrimitiveTypeDiffs() {
-        return primitiveTypeDiffs;
+        return Collections.unmodifiableList(primitiveTypeDiffs);
     }
 
     /**
      * @return Differences fields repetition (e.g. OPTIONAL vs REQUIRED).
      */
     public List<ParquetSchemaRepetitionDiff> getRepetitionDiffs() {
-        return repetitionDiffs;
+        return Collections.unmodifiableList(repetitionDiffs);
     }
 
     /**
