@@ -25,7 +25,7 @@
         <!-- hadoop transitive dependencies updated due to security alerts -->
         <apache-commons.version>3.19.0</apache-commons.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <jackson-databind.version>2.20.0</jackson-databind.version>
+        <jackson-databind.version>2.20.1</jackson-databind.version>
 
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.20</logback.version>
