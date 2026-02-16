@@ -28,7 +28,7 @@
         <jackson-databind.version>2.21.0</jackson-databind.version>
 
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.28</logback.version>
+        <logback.version>1.5.31</logback.version>
 
         <junit.version>5.14.2</junit.version>
         <mockito.version>5.21.0</mockito.version>
