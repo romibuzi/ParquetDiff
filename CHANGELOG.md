@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Bump parquet.version from 1.16.0 to 1.17.1.
+- Update transitive dependencies due to security alerts.
+- Update maven plugins.
+- 
 ## 1.2.0
 
 - Add ParquetReader.getDefault() [#10](https://github.com/romibuzi/ParquetDiff/pull/10).
