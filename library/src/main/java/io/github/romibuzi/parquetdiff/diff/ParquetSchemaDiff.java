@@ -132,26 +132,26 @@ public final class ParquetSchemaDiff {
         repetitionDiffs.add(repetitionDiff);
     }
 
-    void printAdditionalNodes(PrintStream out) {
+    private void printAdditionalNodes(PrintStream out) {
         additionalNodes.forEach(node -> out.printf("additional field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    void printMissingNodes(PrintStream out) {
+    private void printMissingNodes(PrintStream out) {
         missingNodes.forEach(node -> out.printf("missing field: '%s'.%s", node, System.lineSeparator()));
     }
 
-    void printTypeDiffs(PrintStream out) {
+    private void printTypeDiffs(PrintStream out) {
         typeDiffs.forEach(typeDiff -> out.printf("different field type for '%s': '%s' instead of '%s'.%s",
                 typeDiff.getNodePath(), typeDiff.getNewType(), typeDiff.getOldType(), System.lineSeparator()));
     }
 
-    void printPrimitiveTypeDiffs(PrintStream out) {
+    private void printPrimitiveTypeDiffs(PrintStream out) {
         primitiveTypeDiffs.forEach(primitiveDiff -> out.printf("different field primitive type for '%s': '%s' "
                         + "instead of '%s'.%s", primitiveDiff.getNodePath(), primitiveDiff.getNewType(),
                 primitiveDiff.getOldType(), System.lineSeparator()));
     }
 
-    void printRepetitionDiffs(PrintStream out) {
+    private void printRepetitionDiffs(PrintStream out) {
         repetitionDiffs.forEach(repetitionDiff -> out.printf("different repetition for '%s': '%s' "
                         + "instead of '%s'.%s", repetitionDiff.getNodePath(), repetitionDiff.getNewRepetition(),
                 repetitionDiff.getOldRepetition(), System.lineSeparator()));

@@ -14,7 +14,7 @@ public final class ParquetPartitions {
     private final List<ParquetPartition> partitions;
 
     public ParquetPartitions(List<ParquetPartition> partitions) {
-        this.partitions = partitions;
+        this.partitions = List.copyOf(partitions);
     }
 
     /**
