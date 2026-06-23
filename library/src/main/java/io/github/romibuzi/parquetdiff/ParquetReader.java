@@ -27,6 +27,7 @@ public final class ParquetReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParquetReader.class);
     private static final String PARQUET_EXTENSION = ".parquet";
     private static final ParquetReadOptions PARQUET_READ_OPTIONS = ParquetReadOptions.builder().build();
+    private static final Comparator<FileStatus> BY_PATH_COMPARATOR = Comparator.comparing(FileStatus::getPath);
 
     private final FileSystem fileSystem;
     private final ParquetTypeVisitor typeVisitor = new ParquetTypeVisitor();
@@ -150,7 +151,7 @@ public final class ParquetReader {
     private FileStatus[] listFileStatuses(Path path) throws IOException {
         try {
             FileStatus[] fileStatuses = fileSystem.listStatus(path);
-            Arrays.sort(fileStatuses, Comparator.comparing(FileStatus::getPath));
+            Arrays.sort(fileStatuses, BY_PATH_COMPARATOR);
             return fileStatuses;
         } catch (IOException e) {
             LOGGER.error("Could not listStatus on {}", path, e);
