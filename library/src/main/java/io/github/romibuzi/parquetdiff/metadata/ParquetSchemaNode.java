@@ -1,15 +1,12 @@
 package io.github.romibuzi.parquetdiff.metadata;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.parquet.schema.LogicalTypeAnnotation;
 import org.apache.parquet.schema.PrimitiveType;
 import org.apache.parquet.schema.Type;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -119,7 +116,7 @@ public final class ParquetSchemaNode {
      * @return children of the node.
      */
     public List<ParquetSchemaNode> getChildren() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     /**
@@ -176,7 +173,19 @@ public final class ParquetSchemaNode {
         printNode(this, out, 0);
     }
 
-    void printNode(ParquetSchemaNode node, PrintStream out, int indent) {
+    @VisibleForTesting
+    String primitiveName() {
+        if (ParquetSchemaType.PRIMITIVE != type) {
+            throw new UnsupportedOperationException("primitiveName() can only be called from a Primitive node");
+        }
+        String primitiveTypeLower = primitiveType.name().toLowerCase(Locale.ROOT);
+        if (logicalType != null) {
+            return logicalType.toString().toLowerCase(Locale.ROOT) + " (" + primitiveTypeLower + ")";
+        }
+        return primitiveTypeLower;
+    }
+
+    private void printNode(ParquetSchemaNode node, PrintStream out, int indent) {
         String prefix = indent > 0 ? " ".repeat(indent) + "|-- " : "";
 
         String suffix = ":";
@@ -199,17 +208,6 @@ public final class ParquetSchemaNode {
         for (ParquetSchemaNode child : node.children) {
             printNode(child, out, indent + 2);
         }
-    }
-
-    String primitiveName() {
-        if (ParquetSchemaType.PRIMITIVE != type) {
-            throw new UnsupportedOperationException("primitiveName() can only be called from a Primitive node");
-        }
-        String primitiveTypeLower = primitiveType.name().toLowerCase(Locale.ROOT);
-        if (logicalType != null) {
-            return logicalType.toString().toLowerCase(Locale.ROOT) + " (" + primitiveTypeLower + ")";
-        }
-        return primitiveTypeLower;
     }
 
     @Override

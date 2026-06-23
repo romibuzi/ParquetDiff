@@ -1,11 +1,6 @@
 package io.github.romibuzi.parquetdiff.metadata;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Represents a path to the given node in a schema.
@@ -23,7 +18,7 @@ public final class ParquetSchemaNodePath {
      * @param components components of the Path
      */
     public ParquetSchemaNodePath(List<String> components) {
-        this.components = components;
+        this.components = List.copyOf(components);
     }
 
     /**
@@ -43,7 +38,7 @@ public final class ParquetSchemaNodePath {
      * @param components components of the Path
      */
     public ParquetSchemaNodePath(String... components) {
-        this(Arrays.stream(components).collect(Collectors.toList()));
+        this(Arrays.asList(components));
     }
 
     /**
@@ -59,9 +54,10 @@ public final class ParquetSchemaNodePath {
      * @return A new ParquetSchemaNodePath instance with the component appended.
      */
     public ParquetSchemaNodePath add(String component) {
-        ArrayList<String> newComponents = new ArrayList<>(this.components);
+        ArrayList<String> newComponents = new ArrayList<>(this.components.size() + 1);
+        newComponents.addAll(this.components);
         newComponents.add(component);
-        return new ParquetSchemaNodePath(Collections.unmodifiableList(newComponents));
+        return new ParquetSchemaNodePath(newComponents);
     }
 
     /**

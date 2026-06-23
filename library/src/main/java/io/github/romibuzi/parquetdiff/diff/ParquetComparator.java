@@ -6,14 +6,11 @@ import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNode;
 import io.github.romibuzi.parquetdiff.metadata.ParquetSchemaNodePath;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Provide facilities to compare Parquet Schemas.
  */
-public final class ParquetComparator {
-    private ParquetComparator() {
-    }
+public interface ParquetComparator {
 
     /**
      * Checks if all given {@link ParquetPartitions} have the same partition keys.
@@ -23,19 +20,18 @@ public final class ParquetComparator {
      * @return A list of {@link ParquetPartitions} where the structure differs from the first partition.
      * If differences are found, the first element in the list is the reference partition.
      */
-    public static List<ParquetPartitions> findDifferentPartitionsStructure(List<ParquetDetails> parquets) {
-        List<ParquetPartitions> partitions =
-                parquets.stream().map(ParquetDetails::getPartitions).collect(Collectors.toList());
-        if (partitions.isEmpty()) {
+    static List<ParquetPartitions> findDifferentPartitionsStructure(List<ParquetDetails> parquets) {
+        if (parquets.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<ParquetPartitions> results = new ArrayList<>();
 
-        Iterator<ParquetPartitions> iterator = partitions.iterator();
-        ParquetPartitions reference = iterator.next();
+        Iterator<ParquetDetails> iterator = parquets.iterator();
+        ParquetPartitions reference = iterator.next().getPartitions();
 
-        iterator.forEachRemaining(partition -> {
+        iterator.forEachRemaining(parquet -> {
+            ParquetPartitions partition = parquet.getPartitions();
             if (!reference.getKeys().equals(partition.getKeys())) {
                 results.add(partition);
             }
@@ -62,7 +58,7 @@ public final class ParquetComparator {
      * @param parquets Parquets to find schemas differences.
      * @return A list of {@link ParquetSchemaDiff} instances with all differences found.
      */
-    public static List<ParquetSchemaDiff> findSchemasDifferences(List<ParquetDetails> parquets) {
+    static List<ParquetSchemaDiff> findSchemasDifferences(List<ParquetDetails> parquets) {
         if (parquets.isEmpty()) {
             return Collections.emptyList();
         }
@@ -87,7 +83,7 @@ public final class ParquetComparator {
     /**
      * @see ParquetComparator#findSchemasDifferences(List)
      */
-    public static Optional<ParquetSchemaDiff> findSchemasDifferences(ParquetDetails first, ParquetDetails second) {
+    static Optional<ParquetSchemaDiff> findSchemasDifferences(ParquetDetails first, ParquetDetails second) {
         List<ParquetSchemaDiff> differences = findSchemasDifferences(List.of(first, second));
         if (differences.isEmpty()) {
             return Optional.empty();
@@ -104,7 +100,7 @@ public final class ParquetComparator {
      */
     static ParquetSchemaDiff compareSchemas(ParquetDetails firstParquet, ParquetDetails secondParquet) {
         ParquetSchemaDiff diff = new ParquetSchemaDiff(firstParquet, secondParquet);
-        compareSchemasNodes(firstParquet.getSchema(), secondParquet.getSchema(), null, diff);
+        compareSchemasNodes(firstParquet.getSchema(), secondParquet.getSchema(), new ParquetSchemaNodePath(), diff);
         return diff;
     }
 
@@ -112,20 +108,19 @@ public final class ParquetComparator {
                                             ParquetSchemaNode second,
                                             ParquetSchemaNodePath path,
                                             ParquetSchemaDiff diff) {
-        ParquetSchemaNodePath currentPath = path == null
-                ? new ParquetSchemaNodePath(first.getName())
-                : path.add(first.getName());
+        ParquetSchemaNodePath currentPath = path.add(first.getName());
 
         findSchemasNodesDifferences(first, second, currentPath, diff);
 
         Map<String, ParquetSchemaNode> firstChildren = first.getChildrenMap();
         Map<String, ParquetSchemaNode> secondChildren = second.getChildrenMap();
 
-        for (String child : firstChildren.keySet()) {
-            if (!secondChildren.containsKey(child)) {
-                diff.addMissingNode(currentPath.add(child));
+        for (Map.Entry<String, ParquetSchemaNode> firstChild : firstChildren.entrySet()) {
+            ParquetSchemaNode secondChild = secondChildren.get(firstChild.getKey());
+            if (secondChild == null) {
+                diff.addMissingNode(currentPath.add(firstChild.getKey()));
             } else {
-                compareSchemasNodes(firstChildren.get(child), secondChildren.get(child), currentPath, diff);
+                compareSchemasNodes(firstChild.getValue(), secondChild, currentPath, diff);
             }
         }
 
