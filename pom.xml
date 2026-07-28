@@ -26,7 +26,7 @@
         <netty.version>4.1.135.Final</netty.version>
         <apache-commons.version>3.20.0</apache-commons.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
-        <jackson-databind.version>2.22.0</jackson-databind.version>
+        <jackson-databind.version>2.22.1</jackson-databind.version>
         <aircompressor.version>2.0.3</aircompressor.version>
         <zookeeper.version>3.9.5</zookeeper.version>
 
