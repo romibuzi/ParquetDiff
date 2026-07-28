@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+- Enhance performance and immutability [#68](https://github.com/romibuzi/ParquetDiff/pull/68).
+- Update transitive dependencies due to security alerts.
+- Update maven plugins.
+
 ## 1.3.0
 
 - Bump parquet.version from 1.16.0 to 1.17.1.
