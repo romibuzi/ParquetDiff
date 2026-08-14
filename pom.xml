@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <parquet.version>1.17.1</parquet.version>
-        <hadoop.version>3.4.3</hadoop.version>
+        <hadoop.version>3.5.0</hadoop.version>
 
         <!-- hadoop transitive dependencies updated due to security alerts -->
         <jetty.version>12.1.12</jetty.version>
