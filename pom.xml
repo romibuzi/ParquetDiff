@@ -23,7 +23,7 @@
         <hadoop.version>3.4.3</hadoop.version>
 
         <!-- hadoop transitive dependencies updated due to security alerts -->
-        <jetty.version>12.1.12</jetty.version>
+        <jetty.version>12.1.13</jetty.version>
         <netty.version>4.1.136.Final</netty.version>
         <apache-commons.version>3.20.0</apache-commons.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
