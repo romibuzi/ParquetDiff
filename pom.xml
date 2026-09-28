@@ -30,7 +30,7 @@
         <jackson-databind.version>2.22.1</jackson-databind.version>
         <aircompressor.version>2.0.3</aircompressor.version>
         <bouncycastle.version>1.86</bouncycastle.version>
-        <zookeeper.version>3.9.5</zookeeper.version>
+        <zookeeper.version>3.9.6</zookeeper.version>
 
         <slf4j.version>2.0.19</slf4j.version>
         <logback.version>1.6.0</logback.version>
