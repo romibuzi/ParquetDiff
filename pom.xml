@@ -29,7 +29,7 @@
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <jackson-databind.version>2.22.4</jackson-databind.version>
         <aircompressor.version>2.0.3</aircompressor.version>
-        <bouncycastle.version>1.86</bouncycastle.version>
+        <bouncycastle.version>1.87</bouncycastle.version>
         <zookeeper.version>3.9.7</zookeeper.version>
 
         <slf4j.version>2.0.20</slf4j.version>
